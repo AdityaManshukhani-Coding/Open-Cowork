@@ -1,0 +1,26 @@
+$schema: https://raw.githubusercontent.com/ComposioHQ/agent-orchestrator/main/schema/config.schema.json
+port: 3000
+defaults:
+  runtime: tmux
+  agent: opencode
+  workspace: worktree
+  notifiers: []
+
+projects:
+  opencowork:  # Fixed: No spaces here to satisfy the regex validation
+    name: "Open Cowork"
+    sessionPrefix: oc
+    path: "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork"
+    defaultBranch: main
+    # Added workers section to leverage your two Nvidia profiles
+    workers:
+      - name: "nvidia-primary"
+        command: "opencode"  # Profile 1 (40 RPM)
+      - name: "nvidia-secondary"
+        command: "oc2"       # Profile 2 (40 RPM)
+    agentRules: |-
+      Always run tests before pushing.
+      Use conventional commits (feat:, fix:, chore:, docs:, refactor:, test:).
+      Link issue numbers in commit messages.
+      Write clear commit messages that explain WHY, not just WHAT.
+      Coordinate between nvidia-primary and nvidia-secondary to maximize throughput.
