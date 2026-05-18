@@ -1,32 +1,7 @@
-"""
-╔══════════════════════════════════════════════════════════════════════════════╗
-║               AUTONOMOUS CODING TEAM — LangGraph Supervisor                ║
-║                    Production-grade overnight orchestration                 ║
-║                     Nvidia NIM API · SQLite Checkpoints                    ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-Architecture:
-  Supervisor (Manager) → reviews codebase, maps milestones, delegates tasks
-    ├── Worker 1: Backend Coder  (FileRead + FileWrite + Shell tools)
-    ├── Worker 2: UI Artist       (FileRead + FileWrite tools)
-    └── Worker 3: Tester / QA     (Shell tool + git auto-commit gating)
-
-Safety:
-  • SQLite checkpointing → survives API failures and timeouts
-  • Recursion limit of 40 → no infinite loops overnight
-  • Auto git-commit on every passing milestone → rollback safety net
-
-Requirements:
-  pip install langgraph langchain-openai langchain-core
-
-Usage:
-  python orchestrate_langgraph.py
-  python orchestrate_langgraph.py "Build a Flask REST API for a todo app"
-"""
-
 from __future__ import annotations
 
 import functools
+import json
 import os
 import subprocess
 import sys
@@ -36,39 +11,39 @@ from typing import Annotated, List, Optional, TypedDict
 from langgraph.graph.message import add_messages
 
 # ─────────────────────────────────────────────────────────────────────────────
-# API CONFIGURATION — Replace with your Nvidia NIM keys
+# API CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
 
-NVIDIA_API_BASE = "https://integrate.api.nvidia.com/v1"
+OPENROUTER_API_BASE = "https://openrouter.ai/api/v1"
 
 MANAGER_API_KEY = os.environ.get(
-    "NVIDIA_MANAGER_KEY",
-    "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",
+    "OPENROUTER_MANAGER_KEY",
+    "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",
 )
 BACKEND_CODER_KEY = os.environ.get(
-    "NVIDIA_BACKEND_KEY",
-    "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",
+    "OPENROUTER_BACKEND_KEY",
+    "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",
 )
 UI_ARTIST_KEY = os.environ.get(
-    "NVIDIA_UI_KEY",
-    "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",
+    "OPENROUTER_UI_KEY",
+    "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",
 )
 TESTER_KEY = os.environ.get(
-    "NVIDIA_TESTER_KEY",
-    "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",
+    "OPENROUTER_TESTER_KEY",
+    "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",
 )
 
-MANAGER_MODEL = "moonshotai/kimi-k2.6"
-WORKER_MODEL = "moonshotai/kimi-k2.6"
+MANAGER_MODEL = "openai/gpt-oss-120b:free"
+WORKER_MODEL = "openai/gpt-oss-120b:free"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RESILIENCE SETTINGS
 # ─────────────────────────────────────────────────────────────────────────────
 
-RECURSION_LIMIT = 40
-os.environ.setdefault("LITELLM_NUM_RETRIES", "15")
-os.environ.setdefault("LITELLM_MAX_RETRY_DELAY", "60")
-os.environ.setdefault("LITELLM_REQUEST_TIMEOUT", "60")
+RECURSION_LIMIT = 400
+os.environ.setdefault("LITELLM_NUM_RETRIES", "1000")
+os.environ.setdefault("LITELLM_MAX_RETRY_DELAY", "90")
+os.environ.setdefault("LITELLM_REQUEST_TIMEOUT", "300")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # WORKSPACE — the main Open Cowork project directory
@@ -78,7 +53,7 @@ WORKSPACE_PATH = Path(__file__).resolve().parent
 CHECKPOINT_DB = WORKSPACE_PATH / "agent_checkpoints.db"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# IMPORTS  (deferred so config block stays clean at the top)
+# IMPORTS
 # ─────────────────────────────────────────────────────────────────────────────
 
 from langchain_openai import ChatOpenAI
@@ -93,16 +68,10 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 class TeamState(TypedDict):
-    """Shared state across the supervisor and all workers.
-
-    ``create_supervisor`` manages its own internal state around the ``messages``
-    key; the extra fields are injected into the initial state so they appear in
-    the conversation context for the supervisor to reason about.
-    """
-
     messages: Annotated[List[BaseMessage], add_messages]
     task_description: str
     project_root: str
+    next_destination: str
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -234,15 +203,19 @@ def list_workspace_tool(path: str = ".") -> str:
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 def _build_llm(api_key: str, model: str, temperature: float) -> ChatOpenAI:
-    """Return a ChatOpenAI instance pointed at the Nvidia NIM endpoint."""
+    """Return a ChatOpenAI instance pointed at OpenRouter with clean tracking headers."""
     return ChatOpenAI(
         api_key=api_key,
-        base_url=NVIDIA_API_BASE,
+        base_url=OPENROUTER_API_BASE,
         model=model,
         temperature=temperature,
-        max_tokens=4096,
+        max_tokens=4096, 
         timeout=90,
-        max_retries=15,
+        max_retries=1000,
+        default_headers={
+            "HTTP-Referer": "https://github.com/aditya-manshukhani/open-cowork", 
+            "X-Title": "Open Cowork Orchestrator"
+        }
     )
 
 
@@ -309,22 +282,11 @@ tester_qa = create_react_agent(
 # ║                     S U P E R V I S O R   G R A P H                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
-from typing import Literal
-from pydantic import BaseModel, Field
-
-# Define structured routing options for the supervisor
-class RouterOptions(BaseModel):
-    next_step: Literal["Backend_Coder", "UI_Artist", "Tester_QA", "FINISH"] = Field(
-        description="The next worker to handle the task, or FINISH if completely done."
-    )
-
 def supervisor_node(state: TeamState):
-    """Manual supervisor implementation matching LangGraph 0.6.x layout."""
+    """Manual supervisor implementation using text-parsed JSON routing to handle
+    non-functional free-tier constraints safely.
+    """
     llm = _build_llm(MANAGER_API_KEY, MANAGER_MODEL, temperature=0.2)
-    
-    # Bind the structural output so the LLM must choose a destination
-    structured_llm = llm.with_structured_output(RouterOptions)
-    
     
     system_prompt =(
         "You are the Project Manager / Supervisor of an autonomous coding "
@@ -347,30 +309,41 @@ def supervisor_node(state: TeamState):
         "CRITICAL:\n"
         "- Never delegate to two workers simultaneously — sequential only.\n"
         "- Never skip the Tester_QA step after code changes.\n"
-        "- When the project is fully complete, respond with \"PROJECT COMPLETE\"."
+        "- When the project is fully complete, respond with \"PROJECT COMPLETE\".\n\n"
+        "IMPORTANT: You MUST append a raw JSON block tracking the next step on its own line at the absolute end of your reply:\n"
+        '{"next_step": "Tester_QA"}   (Choose strictly from: "Backend_Coder", "UI_Artist", "Tester_QA", "FINISH")'
     )
 
-
-
     messages = [HumanMessage(content=system_prompt)] + state["messages"]
-    response = structured_llm.invoke(messages)
+    response = llm.invoke(messages)
+    content = response.content.strip()
     
-    # Inject routing choice into the state message history
+    # Default fallback to testing layout if schema extraction trips
+    next_step = "Tester_QA"
+    
+    start = content.rfind("{")
+    if start != -1:
+        end = content.find("}", start)
+        if end != -1:
+            try:
+                parsed = json.loads(content[start:end+1])
+                candidate = parsed.get("next_step")
+                if candidate in ["Backend_Coder", "UI_Artist", "Tester_QA", "FINISH"]:
+                    next_step = candidate
+            except Exception:
+                pass
+
+    # Safety Guard: Intercept immediate exits before any QA confirmation passes
+    has_passed_tests = any("ALL CHECKS PASSED" in getattr(m, "content", "") for m in state["messages"])
+    if next_step == "FINISH" and not has_passed_tests:
+        next_step = "Tester_QA"
+    
     return {
-        "messages": [AIMessage(content=f"Supervisor designated: {response.next_step}")],
-        "next_destination": response.next_step
+        "messages": [AIMessage(content=f"Supervisor designated: {next_step}")],
+        "next_destination": next_step
     }
 
-# Extend TeamState to include the router tracking field
-# Extend TeamState to include the router tracking field
-class TeamState(TypedDict):
-    messages: Annotated[List[BaseMessage], add_messages]
-    task_description: str
-    project_root: str
-    next_destination: str  # Added for state-based routing
 
-
-# Pull this entirely out of the class definition block (0 indentation)
 @functools.lru_cache(maxsize=1)
 def _get_compiled_graph():
     """Build and compile the multi-agent state graph using 0.6.x syntax."""
@@ -378,18 +351,43 @@ def _get_compiled_graph():
     
     workflow = StateGraph(TeamState)
     
-    # Add all agent nodes
-    workflow.add_node("supervisor", supervisor_node)
-    workflow.add_node("Backend_Coder", backend_coder)
-    workflow.add_node("UI_Artist", ui_artist)
-    workflow.add_node("Tester_QA", tester_qa)
+    def _rate_limited_invoke(agent, label: str, state: TeamState):
+        """Invoke *agent* with retry on API rate limits and explicitly reset routing state."""
+        import time
+        for attempt in range(1, 16):
+            try:
+                response = agent.invoke(state)
+                return {
+                    "messages": response["messages"],
+                    "next_destination": "supervisor"
+                }
+            except Exception as exc:
+                if "429" in str(exc) or "Too Many Requests" in str(exc):
+                    wait = 90  
+                    print(f"⚠️  [{label} Rate-Limited] Retrying ({attempt}/15) in {wait}s...")
+                    time.sleep(wait)
+                else:
+                    raise exc
+        raise RuntimeError(f"{label} failed after persistent rate limits.")
+
+    def run_backend(state: TeamState):
+        return _rate_limited_invoke(backend_coder, "Backend Coder", state)
+
+    def run_ui(state: TeamState):
+        return _rate_limited_invoke(ui_artist, "UI Artist", state)
+
+    def run_tester(state: TeamState):
+        return _rate_limited_invoke(tester_qa, "Tester QA", state)
     
-    # Define directional returns back to supervisor
+    workflow.add_node("supervisor", supervisor_node)
+    workflow.add_node("Backend_Coder", run_backend)
+    workflow.add_node("UI_Artist", run_ui)
+    workflow.add_node("Tester_QA", run_tester)
+    
     workflow.add_edge("Backend_Coder", "supervisor")
     workflow.add_edge("UI_Artist", "supervisor")
     workflow.add_edge("Tester_QA", "supervisor")
     
-    # Configure dynamic conditional routing from the supervisor node
     workflow.add_conditional_edges(
         "supervisor",
         lambda state: state["next_destination"],
@@ -404,8 +402,6 @@ def _get_compiled_graph():
     workflow.set_entry_point("supervisor")
     
     import sqlite3
-    
-    # Establish a persistent connection to the SQLite database file
     conn = sqlite3.connect(str(CHECKPOINT_DB), check_same_thread=False)
     checkpointer = SqliteSaver(conn)
     
@@ -413,7 +409,7 @@ def _get_compiled_graph():
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                          P U B L I C   A P I                                ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
+# ╚══════════════════════════════════════════════════════════════════════════════╗
 
 def run_autonomous_team(
     task: str,
@@ -421,24 +417,6 @@ def run_autonomous_team(
     thread_id: Optional[str] = None,
     resume: bool = False,
 ) -> str:
-    """Invoke the overnight coding team on the given task.
-
-    Parameters
-    ----------
-    task : str
-        High-level project requirement to implement.
-    thread_id : str | None
-        Stable id for checkpointing.  If ``resume`` is True and no id is
-        given, the most-recent thread is used.
-    resume : bool
-        If True, resume the last checkpointed run rather than starting fresh.
-
-    Returns
-    -------
-    str
-        Final agent output — milestone summary, commit list, or error report.
-    """
-
     if resume and thread_id is None:
         thread_id = _latest_thread_id()
         if thread_id is None:
@@ -458,12 +436,12 @@ def run_autonomous_team(
         ],
         "task_description": task,
         "project_root": str(WORKSPACE_PATH),
-        "next_destination": "supervisor",  # Seed the initial destination tracker
+        "next_destination": "supervisor", 
     }
 
     config = {
         "configurable": {"thread_id": thread_id},
-        "recursion_limit": RECURSION_LIMIT + 10,  # supervisor wrapper overhead
+        "recursion_limit": RECURSION_LIMIT + 10,  
     }
 
     print(f"\n{'═'*70}")
@@ -474,7 +452,24 @@ def run_autonomous_team(
     print(f"{'═'*70}\n")
 
     try:
-        result = _get_compiled_graph().invoke(initial_state, config=config)
+        print("🤖 [System] Standing up OpenRouter agent communication lines...\n")
+        
+        for event in _get_compiled_graph().stream(initial_state, config=config, stream_mode="values"):
+            if "messages" in event and event["messages"]:
+                latest_message = event["messages"][-1]
+                sender = getattr(latest_message, "name", latest_message.__class__.__name__)
+                if sender == "HumanMessage":
+                    continue
+                
+                print(f"\n🔹 [\033[1;34m{sender}\033[0m]")
+                if latest_message.content:
+                    print(f"{latest_message.content}")
+                
+                if hasattr(latest_message, "tool_calls") and latest_message.tool_calls:
+                    for tool_call in latest_message.tool_calls:
+                        print(f"🛠️  \033[0;33mUsing Tool:\033[0m {tool_call['name']}")
+                        
+        result = _get_compiled_graph().get_state(config).values
     except Exception as exc:
         return (
             f"ORCHESTRATION HALTED — {exc}\n\n"
@@ -497,15 +492,8 @@ def resume_last_run() -> str:
     return run_autonomous_team(task="(resume)", resume=True)
 
 
-# ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                          H E L P E R S                                      ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
-
 def _latest_thread_id() -> Optional[str]:
-    """Return the thread_id of the most-recent checkpoint, if any.
-
-    Falls back gracefully if the DB schema changes or the file is absent.
-    """
+    """Return the thread_id of the most-recent checkpoint, if any."""
     if not CHECKPOINT_DB.exists():
         return None
     try:
@@ -518,12 +506,8 @@ def _latest_thread_id() -> Optional[str]:
         conn.close()
         return row[0] if row else None
     except Exception:
-        return None  # schema changed, DB locked, etc. — not critical
+        return None
 
-
-# ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                          M A I N                                            ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 if __name__ == "__main__":
     TASK_PROMPT = (

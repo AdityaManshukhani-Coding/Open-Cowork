@@ -37,6 +37,7 @@ _tasks: dict[str, TaskState] = {}
 _cost_tracker = CostTracker()
 _safety = SafetyGuard()
 
+
 # ---------------------------------------------------------------------------
 # FastAPI lifespan
 # ---------------------------------------------------------------------------
@@ -61,6 +62,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # ---------------------------------------------------------------------------
 # REST endpoints
@@ -95,7 +97,12 @@ async def create_task(payload: dict[str, Any]) -> dict[str, Any]:
 
     # Kick off the agent loop asynchronously.
     asyncio.create_task(
-        AgentLoop.run(task_id=task_id, state=state, tracker=_cost_tracker, guard=_safety)
+        AgentLoop.run(
+            task_id=task_id,
+            state=state,
+            tracker=_cost_tracker,
+            guard=_safety,
+        )
     )
 
     logger.info("Task %s created: %r", task_id, instruction)
