@@ -33,8 +33,8 @@ TESTER_KEY = os.environ.get(
     "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",
 )
 
-MANAGER_MODEL = "openai/gpt-oss-120b:free"
-WORKER_MODEL = "openai/gpt-oss-120b:free"
+MANAGER_MODEL = "deepseek/deepseek-v4-flash:free"
+WORKER_MODEL = "deepseek/deepseek-v4-flash:free"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RESILIENCE SETTINGS
