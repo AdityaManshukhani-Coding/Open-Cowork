@@ -1,13 +1,15 @@
 """Safety utilities for the orchestrator.
 
-Placeholder module that will later contain cost‑limit checks, approval
-gateways, and emergency‑stop handling. For now it provides a simple
-function that can be expanded without breaking imports.
+Placeholder implementations that always allow tasks. Real checks will enforce
+cost limits, approval modes, and per‑app allowlists.
 """
 
-def check_cost_limit(current_cost: float, limit: float) -> bool:
-    """Return ``True`` if the current cost is within the allowed *limit*.
+from .cost_tracker import CostTracker
 
-    The real implementation will integrate with :pymod:`cost_tracker`.
-    """
-    return current_cost <= limit
+_cost_tracker = CostTracker()
+
+def check_allowed(task) -> bool:
+    return True
+
+def check_allowed_prompt(prompt: str) -> bool:
+    return True

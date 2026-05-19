@@ -1,74 +1,86 @@
 """FastAPI entry point for the Open Cowork orchestrator.
 
-Defines HTTP endpoints for task submission and status queries, as well as a
-WebSocket endpoint for real‑time streaming of agent actions.
+Provides HTTP endpoints for task submission, status retrieval, and a WebSocket
+for real‑time updates. All routes are deliberately minimal for the v0.1
+foundation.
 """
 
-from fastapi import FastAPI, WebSocket, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-import uuid
+import asyncio
 
-from .agent_loop import AgentLoop
-from .storage import TaskStorage
+from . import storage, agent_loop, safety
 
 app = FastAPI(title="Open Cowork Orchestrator")
 
-# Simple in‑memory storage (could be swapped for SQLite later)
-storage = TaskStorage()
-agent_loop = AgentLoop(storage)
-
+# ---------------------------------------------------------------------------
+# Request models
+# ---------------------------------------------------------------------------
 
 class TaskRequest(BaseModel):
-    """Payload for creating a new task."""
-
+    task_id: str
     prompt: str
-    # Additional fields (e.g., model, safety_mode) could be added here.
 
+# ---------------------------------------------------------------------------
+# HTTP endpoints
+# ---------------------------------------------------------------------------
 
 @app.post("/task")
-async def create_task(request: TaskRequest):
-    """Create a new task and start the agent loop.
+async def submit_task(request: TaskRequest):
+    """Submit a new task.
 
-    Returns a JSON object containing the generated ``task_id``.
+    The request is validated, passes through a safety check, and is stored for
+    processing by the background agent loop.
     """
-    task_id = str(uuid.uuid4())
-    await storage.save_task(task_id, {"prompt": request.prompt, "status": "queued"})
-    # Fire‑and‑forget the agent loop for this task.
-    agent_loop.start_task(task_id, request.prompt)
-    return JSONResponse(content={"task_id": task_id})
+    if not safety.check_allowed(request):
+        raise HTTPException(status_code=403, detail="Task blocked by safety policy")
+    await storage.save_task(request.task_id, request.prompt)
+    return JSONResponse(content={"status": "queued", "task_id": request.task_id})
 
+@app.get("/status")
+async def get_status():
+    """Return pending and completed tasks."""
+    pending = await storage.list_pending()
+    completed = await storage.list_completed()
+    return {"pending": pending, "completed": completed}
 
-@app.get("/status/{task_id}")
-async def get_status(task_id: str):
-    """Return the current status of a task.
+# ---------------------------------------------------------------------------
+# WebSocket endpoint (placeholder implementation)
+# ---------------------------------------------------------------------------
 
-    Raises ``404`` if the task does not exist.
-    """
-    task = await storage.get_task(task_id)
-    if task is None:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return JSONResponse(content={"task_id": task_id, "status": task.get("status")})
+class ConnectionManager:
+    def __init__(self):
+        self.active: list[WebSocket] = []
 
+    async def connect(self, ws: WebSocket):
+        await ws.accept()
+        self.active.append(ws)
 
-@app.websocket("/ws/{task_id}")
-async def websocket_endpoint(websocket: WebSocket, task_id: str):
-    """WebSocket stream for a specific task.
+    def disconnect(self, ws: WebSocket):
+        self.active.remove(ws)
 
-    The client receives JSON messages with ``event`` and ``data`` fields.
-    """
-    await websocket.accept()
-    if not await storage.task_exists(task_id):
-        await websocket.send_json({"event": "error", "data": "Task not found"})
-        await websocket.close()
-        return
-    # Register the websocket with the agent loop so it receives updates.
-    await agent_loop.register_ws(task_id, websocket)
+    async def broadcast(self, message: str):
+        for ws in self.active:
+            await ws.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_endpoint(ws: WebSocket):
+    await manager.connect(ws)
     try:
         while True:
-            # Keep the connection alive; the agent loop pushes messages.
-            await websocket.receive_text()
-    except Exception:
-        # Client disconnected – clean up.
-        await agent_loop.unregister_ws(task_id, websocket)
-        await websocket.close()
+            await asyncio.sleep(5)
+            await manager.broadcast("heartbeat")
+    except WebSocketDisconnect:
+        manager.disconnect(ws)
+
+# ---------------------------------------------------------------------------
+# Startup – launch background agent loop
+# ---------------------------------------------------------------------------
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(agent_loop.run())
+

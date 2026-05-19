@@ -558,6 +558,7 @@ def run_autonomous_team(
     try:
         print("🤖 [System] Standing up OpenRouter agent communication lines...\n")
         
+        previous_msg_count = 0
         for event in _get_compiled_graph().stream(initial_state, config=config, stream_mode="values"):
             if "messages" in event and event["messages"]:
                 latest_message = event["messages"][-1]
@@ -569,9 +570,16 @@ def run_autonomous_team(
                 if latest_message.content:
                     print(f"{latest_message.content}")
                 
-                if hasattr(latest_message, "tool_calls") and latest_message.tool_calls:
-                    for tool_call in latest_message.tool_calls:
-                        print(f"🛠️  \033[0;33mUsing Tool:\033[0m {tool_call['name']}")
+                # Scan only NEW messages for tool calls (not the last message only, and not old ones)
+                # The ReAct agent produces multiple messages per node invocation:
+                # AIMessage(tool_calls) -> ToolMessage -> AIMessage(final text)
+                # Tool calls are in earlier messages, NOT in the final text message.
+                # Track message count to avoid re-scanning old messages on future events.
+                for msg in event["messages"][previous_msg_count:]:
+                    if hasattr(msg, "tool_calls") and msg.tool_calls:
+                        for tool_call in msg.tool_calls:
+                            print(f"🛠️  \033[0;33mUsing Tool:\033[0m {tool_call['name']}")
+                previous_msg_count = len(event["messages"])
                         
         result = _get_compiled_graph().get_state(config).values
     except Exception as exc:
