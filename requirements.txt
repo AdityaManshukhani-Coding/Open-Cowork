@@ -1,16 +1,4 @@
-# Open Cowork – Python orchestrator dependencies
-# ------------------------------------------------
-
-# Web framework & server
-fastapi>=0.115.0
-uvicorn[standard]>=0.32.0
-
-# WebSocket support (also pulled by uvicorn[standard], but explicit is fine)
-websockets>=14.0
-
-# HTTP client for provider adapters (v0.2)
-httpx>=0.28.0
-
-# Environment & utilities
-python-dotenv>=1.0.0
-pydantic>=2.10.0
+fastapi
+uvicorn[standard]
+websockets
+pydantic

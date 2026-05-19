@@ -1,6 +1,5 @@
-"""Open Cowork orchestrator package.
+"""Orchestrator package for Open Cowork.
 
-This package contains the core orchestration logic for the Open Cowork
-AI desktop agent, including the FastAPI application, agent loop, safety
-guards, cost tracking, and AI provider integrations.
+Provides the FastAPI server, agent loop, safety checks, cost tracking,
+storage utilities, and LLM provider wrappers.
 """

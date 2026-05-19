@@ -1,78 +1,81 @@
-"""Core agent execution loop for Open Cowork.
+"""Agent loop placeholder.
 
-The ``AgentLoop`` drives a task from queue through completion by
-interacting with the chosen AI provider, the macOS control layer, and
-the safety / cost subsystems.
+Manages the lifecycle of a single task: invokes the LLM provider, streams
+updates to registered WebSocket connections, and updates task status in
+storage. The real implementation will be expanded later.
 """
 
-from __future__ import annotations
-
 import asyncio
-import logging
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import Dict, List
+from fastapi import WebSocket
 
-if TYPE_CHECKING:
-    from orchestrator.cost_tracker import CostTracker
-    from orchestrator.safety import SafetyGuard
-
-logger = logging.getLogger(__name__)
-
-
-@dataclass
-class TaskState:
-    """Mutable container for the runtime state of a single task."""
-
-    task_id: str
-    instruction: str
-    model: str | None = None
-    provider: str | None = None
-    status: str = "queued"  # queued | running | paused | completed | failed
-    actions: list[dict] = field(default_factory=list)
-
+from .storage import TaskStorage
+from .providers.openai import generate as openai_generate
 
 class AgentLoop:
-    """Orchestrates one turn of the agent reasoning → action cycle."""
+    """Simple orchestrator for a single task.
 
-    @staticmethod
-    async def run(
-        *,
-        task_id: str,
-        state: TaskState,
-        tracker: "CostTracker",
-        guard: "SafetyGuard",
-    ) -> None:
-        """Execute *state* until completion, failure, or user stop.
+    For each task we keep a list of WebSocket connections that should receive
+    streamed events. The ``start_task`` method launches an async background task
+    that calls the LLM provider and pushes messages.
+    """
 
-        Args:
-            task_id: UUID of the task.
-            state: Mutable task state object.
-            tracker: Shared cost tracker instance.
-            guard: Shared safety guard instance.
+    def __init__(self, storage: TaskStorage):
+        self.storage = storage
+        self._ws_map: Dict[str, List[WebSocket]] = {}
+        self._running_tasks: Dict[str, asyncio.Task] = {}
+
+    async def register_ws(self, task_id: str, ws: WebSocket) -> None:
+        """Register a websocket to receive updates for *task_id*."""
+        self._ws_map.setdefault(task_id, []).append(ws)
+        # Send current status immediately.
+        task = await self.storage.get_task(task_id)
+        if task:
+            await ws.send_json({"event": "status", "data": task.get("status")})
+
+    async def unregister_ws(self, task_id: str, ws: WebSocket) -> None:
+        """Remove a websocket from the notification list."""
+        if task_id in self._ws_map:
+            try:
+                self._ws_map[task_id].remove(ws)
+            except ValueError:
+                pass
+            if not self._ws_map[task_id]:
+                del self._ws_map[task_id]
+
+    def start_task(self, task_id: str, prompt: str) -> None:
+        """Kick off the background coroutine for a task.
+
+        The coroutine updates storage status, calls the LLM provider and streams
+        results to any registered websockets.
         """
-        state.status = "running"
-        logger.info("[%s] Agent loop started for: %s", task_id, state.instruction)
+        if task_id in self._running_tasks:
+            # Task already running – ignore duplicate start.
+            return
+        loop = asyncio.get_event_loop()
+        self._running_tasks[task_id] = loop.create_task(self._run(task_id, prompt))
 
+    async def _run(self, task_id: str, prompt: str) -> None:
+        """Internal coroutine that drives a single task lifecycle."""
+        await self.storage.update_task(task_id, {"status": "running"})
+        await self._broadcast(task_id, {"event": "status", "data": "running"})
         try:
-            # TODO(v0.2): integrate provider selection, screenshot capture,
-            #             AXUIElement queries, and CGEvent dispatch.
-            await asyncio.sleep(0.1)  # placeholder work
+            # Call the LLM provider – placeholder uses OpenAI wrapper.
+            response = await openai_generate(prompt)
+            await self.storage.update_task(task_id, {"status": "completed", "result": response})
+            await self._broadcast(task_id, {"event": "result", "data": response})
+        except Exception as exc:
+            await self.storage.update_task(task_id, {"status": "error", "error": str(exc)})
+            await self._broadcast(task_id, {"event": "error", "data": str(exc)})
+        finally:
+            # Clean up task record.
+            self._running_tasks.pop(task_id, None)
 
-            # Simulate a single action for the skeleton.
-            action = {"type": "noop", "reason": "skeleton implementation"}
-            state.actions.append(action)
-
-            # Safety check (placeholder)
-            if not guard.is_allowed(action):
-                state.status = "failed"
-                logger.warning("[%s] Action blocked by safety guard", task_id)
-                return
-
-            # Cost tracking (placeholder)
-            tracker.add_cost(task_id, usd=0.0)
-
-            state.status = "completed"
-            logger.info("[%s] Agent loop completed", task_id)
-        except Exception as exc:  # pragma: no cover
-            state.status = "failed"
-            logger.exception("[%s] Agent loop error: %s", task_id, exc)
+    async def _broadcast(self, task_id: str, message: dict) -> None:
+        """Send *message* to all websockets registered for *task_id*."""
+        for ws in self._ws_map.get(task_id, []):
+            try:
+                await ws.send_json(message)
+            except Exception:
+                # Silently ignore broken connections – they will be cleaned up on next recv.
+                pass

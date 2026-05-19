@@ -33,8 +33,8 @@ TESTER_KEY = os.environ.get(
     "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",
 )
 
-MANAGER_MODEL = "deepseek/deepseek-v4-flash:free"
-WORKER_MODEL = "deepseek/deepseek-v4-flash:free"
+MANAGER_MODEL = "openai/gpt-oss-120b:free"
+WORKER_MODEL = "openai/gpt-oss-120b:free"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RESILIENCE SETTINGS
@@ -167,7 +167,7 @@ def git_snapshot_tool(commit_message: str) -> str:
             timeout=10,
             cwd=str(WORKSPACE_PATH),
         )
-        return f"COMMITTED: {hash_result.stdout.strip()} — {commit_message}"
+        return f"COMMITTED: {hash_result.stdout.strip()} -- {commit_message}"
     except Exception as exc:
         return f"GIT ERROR: {exc}"
 
@@ -227,12 +227,34 @@ backend_coder = create_react_agent(
     model=_build_llm(BACKEND_CODER_KEY, WORKER_MODEL, temperature=0.1),
     tools=[file_read_tool, file_write_tool, shell_tool, list_workspace_tool],
     prompt=(
-        "You are the Backend Coder for the Open Cowork project. You are a system agent that MUST use tools to interact with the environment.\n\n"
-        "CRITICAL DIRECTIVES - READ CAREFULLY:\n"
-        "1. NO PRETENDING: You CANNOT create files by just typing code in your chat response. You MUST explicitly invoke the `file_write_tool` to save code to the disk.\n"
-        "2. VERIFY REALITY: Always use `list_workspace_tool` to see what actually exists in the directory before assuming files are there.\n"
-        "3. DO THE WORK: If you are asked to initialize a project or write a script, you must actively call `file_write_tool` for EVERY single file required in the deliverables.\n"
-        "4. NEVER say you have completed a task unless you have successfully executed the tool calls to write the files."
+        "You are the Backend Coder for the Open Cowork project. You MUST use tools "
+        "to write code to disk. You CANNOT create files by describing them in text.\n\n"
+        "SKILLS - CHECK BEFORE CODING:\n"
+        "1. Call list_workspace_tool(path=\".opencode/skill\") to discover available skills.\n"
+        "2. For each skill relevant to your backend task (e.g. react-native-best-practices,\n"
+        "   upgrading-react-native, react-native-brownfield-migration, github, github-actions,\n"
+        "   macos-menubar-tuist-app), read its SKILL.md:\n"
+        "   file_read_tool(path=\".opencode/skill/<skill-name>/SKILL.md\")\n"
+        "3. Apply the patterns and guidelines from those skills in your implementation.\n\n"
+        "CRITICAL DIRECTIVES:\n"
+        "1. INVOKE file_write_tool for EVERY file you create. Do not just describe the code.\n"
+        "2. Use list_workspace_tool first to see what exists before making assumptions.\n"
+        "3. After writing each file, the tool will return confirmation like "
+        "\"OK: wrote 512 bytes to 'filename'.\" Wait for that confirmation.\n"
+        "4. If you are writing multiple files, write them one at a time.\n"
+        "5. NEVER say \"I have created the files\" unless the tool has confirmed each write.\n\n"
+        "CORRECT PATTERN - FOLLOW THIS EXACTLY:\n"
+        "  Step 1: list_workspace_tool(path=\".\")   -- see what exists\n"
+        "  Step 2: list_workspace_tool(path=\".opencode/skill\")   -- discover relevant skills\n"
+        "  Step 3: file_read_tool(path=\".opencode/skill/<name>/SKILL.md\")   -- read relevant skill\n"
+        "  Step 4: file_write_tool(path=\"orchestrator/main.py\", content=\"from fastapi import FastAPI\\n...\")   -- write file\n"
+        "  Step 5: Wait for tool to confirm: \"OK: wrote N bytes to 'orchestrator/main.py'.\"\n"
+        "  Step 6: file_write_tool(path=\"orchestrator/__init__.py\", content=\"# package\\n\")   -- write next file\n"
+        "  Step 7: Repeat for all required files.\n"
+        "  Step 8: Only then say \"All files written.\"\n\n"
+        "FAILURE MODE - NEVER DO THIS:\n"
+        "  Writing code in your chat message and saying \"I created the file.\" "
+        "This does NOT actually write anything to disk."
     ),
     name="Backend_Coder",
 )
@@ -241,11 +263,36 @@ ui_artist = create_react_agent(
     model=_build_llm(UI_ARTIST_KEY, WORKER_MODEL, temperature=0.3),
     tools=[file_read_tool, file_write_tool, list_workspace_tool],
     prompt=(
-        "You are the UI Artist. You operate entirely through tool invocations.\n\n"
+        "You are the UI Artist for the Open Cowork project. You MUST use tools "
+        "to write UI code to disk. You CANNOT create files by describing them in text.\n\n"
+        "SKILLS - CHECK BEFORE CODING:\n"
+        "1. Call list_workspace_tool(path=\".opencode/skill\") to discover available skills.\n"
+        "2. For each UI-relevant skill, read its SKILL.md:\n"
+        "   - swiftui-ui-patterns: SwiftUI patterns, navigation, layouts, sheets, menus\n"
+        "   - swiftui-liquid-glass: iOS 26+ Liquid Glass glassmorphism API\n"
+        "   - macos-menubar-tuist-app: macOS menubar app patterns, Tuist manifests, run scripts\n"
+        "   - react-native-best-practices: RN performance, FPS, bundle, animations (if React Native)\n"
+        "   Use: file_read_tool(path=\".opencode/skill/<skill-name>/SKILL.md\")\n"
+        "3. Apply the design patterns, conventions, and code snippets from those skills.\n\n"
         "CRITICAL DIRECTIVES:\n"
-        "1. Always read existing UI files first to match conventions using `file_read_tool`.\n"
-        "2. You MUST use `file_write_tool` for all changes. Do not output code directly to the user.\n"
-        "3. Report every file you modify only AFTER the tool confirms it was written."
+        "1. INVOKE file_write_tool for EVERY file you create or modify. Do not just describe the code.\n"
+        "2. Use file_read_tool first to read existing UI files and match conventions.\n"
+        "3. After writing each file, the tool will return confirmation like "
+        "\"OK: wrote 512 bytes to 'filename'.\" Wait for that confirmation.\n"
+        "4. If you are writing multiple files, write them one at a time.\n"
+        "5. NEVER say \"I have updated the UI\" unless the tool has confirmed each write.\n\n"
+        "CORRECT PATTERN - FOLLOW THIS EXACTLY:\n"
+        "  Step 1: list_workspace_tool(path=\".opencode/skill\")   -- discover UI skills\n"
+        "  Step 2: file_read_tool(path=\".opencode/skill/swiftui-ui-patterns/SKILL.md\")   -- read patterns\n"
+        "  Step 3: file_read_tool(path=\"orchestrator/main.py\")   -- read existing files first\n"
+        "  Step 4: file_write_tool(path=\"orchestrator/static/style.css\", content=\"body { font-family: sans-serif; }\\n\")   -- write UI file\n"
+        "  Step 5: Wait for tool to confirm: \"OK: wrote N bytes to 'orchestrator/static/style.css'.\"\n"
+        "  Step 6: file_write_tool(path=\"orchestrator/templates/index.html\", content=\"<!DOCTYPE html>\\n<html>...\")   -- write next file\n"
+        "  Step 7: Repeat for all required files.\n"
+        "  Step 8: Only then say \"All UI files written.\"\n\n"
+        "FAILURE MODE - NEVER DO THIS:\n"
+        "  Writing HTML/CSS code in your chat message and saying \"I created the UI.\" "
+        "This does NOT actually write anything to disk."
     ),
     name="UI_Artist",
 )
@@ -254,30 +301,72 @@ tester_qa = create_react_agent(
     model=_build_llm(TESTER_KEY, WORKER_MODEL, temperature=0.0),
     tools=[shell_tool, file_read_tool, list_workspace_tool, git_snapshot_tool],
     prompt=(
-        "You are the Tester / QA. You are a strict, skeptical quality gatekeeper.\n\n"
-        "CRITICAL DIRECTIVES - READ CAREFULLY:\n"
-        "1. NEVER TRUST, ALWAYS VERIFY: Do not trust the Coder when they say they wrote a file. You MUST use `list_workspace_tool` to verify the files actually exist on the disk.\n"
-        "2. NO HALLUCINATIONS: You CANNOT verify code syntax by just reading it in chat. You MUST invoke `shell_tool` with the command `python3 -m py_compile <file>` for Python files.\n"
-        "3. COMMIT THE CODE: If and ONLY if the `shell_tool` returns zero errors for the files, you MUST invoke `git_snapshot_tool` to commit the code.\n"
-        "4. ONLY reply with the exact phrase \"ALL CHECKS PASSED — COMMITTED\" after you see the successful commit hash returned by the git tool. If files are missing or errors occur, report them and DO NOT commit."
+        "You are the Tester / QA for the Open Cowork project. You are a strict, "
+        "skeptical quality gatekeeper. You MUST use tools to verify code — you "
+        "CANNOT trust claims made in chat messages.\n\n"
+        "SKILLS - CHECK BEFORE TESTING:\n"
+        "1. Call list_workspace_tool(path=\".opencode/skill\") to discover available skills.\n"
+        "2. For relevant testing/CI skills, read their SKILL.md:\n"
+        "   - github: PR workflows, commit conventions, stacked PR merge patterns\n"
+        "   - github-actions: CI build artifact patterns for testing\n"
+        "   Use: file_read_tool(path=\".opencode/skill/<skill-name>/SKILL.md\")\n"
+        "3. Apply the patterns from those skills when verifying commits and CI workflows.\n\n"
+        "CRITICAL DIRECTIVES:\n"
+        "1. NEVER TRUST, ALWAYS VERIFY: Do not trust the Coder when they say they wrote "
+        "a file. Use `list_workspace_tool` to check files actually exist on disk.\n"
+        "2. You CANNOT verify code by reading it. You MUST invoke `shell_tool` to "
+        "actually run `python3 -m py_compile <file>` for Python files.\n"
+        "3. After the tool returns EXIT: 0 for all files, you MUST call "
+        "`git_snapshot_tool` to commit the code with a Conventional Commits message.\n"
+        "4. ONLY reply with the exact phrase \"ALL CHECKS PASSED -- COMMITTED\" after "
+        "the git_snapshot_tool returns a hash like \"COMMITTED: abc1234 -- feat: ...\".\n"
+        "5. If files are missing or any check fails, report the errors and DO NOT commit.\n\n"
+        "CORRECT PATTERN - FOLLOW THIS EXACTLY:\n"
+        "  Step 1: list_workspace_tool(path=\".opencode/skill\")   -- discover skills\n"
+        "  Step 2: list_workspace_tool(path=\"orchestrator\")   -- verify files exist\n"
+        "  Step 3: shell_tool(command=\"python3 -m py_compile orchestrator/main.py\")   -- check syntax\n"
+        "  Step 4: Check output for \"EXIT: 0\" -- if errors found, report them and STOP.\n"
+        "  Step 5: shell_tool(command=\"python3 -m py_compile orchestrator/__init__.py\")   -- check next file\n"
+        "  Step 6: After ALL files pass (EXIT: 0), call:\n"
+        "    git_snapshot_tool(commit_message=\"feat: add orchestrator skeleton\")\n"
+        "  Step 7: Wait for the tool to return \"COMMITTED: <hash> -- feat: ...\"\n"
+        "  Step 8: Then reply: \"ALL CHECKS PASSED -- COMMITTED\"\n\n"
+        "FAILURE MODE - NEVER DO THIS:\n"
+        "  Saying \"All files look good, committing now.\" in your chat message. "
+        "You MUST actually invoke git_snapshot_tool and wait for its response."
     ),
     name="Tester_QA",
 )
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                     S U P E R V I S O R   G R A P H                         ║
+# ║                     S U P E R V I S O R   L O O P                            ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
-def supervisor_node(state: TeamState):
-    """Manual supervisor implementation using text-parsed JSON routing to handle
-    non-functional free-tier constraints safely.
-    """
-    llm = _build_llm(MANAGER_API_KEY, MANAGER_MODEL, temperature=0.2)
-    
-    system_prompt =(
+supervisor_agent = create_react_agent(
+    model=_build_llm(MANAGER_API_KEY, MANAGER_MODEL, temperature=0.2),
+    tools=[file_read_tool, list_workspace_tool],
+    prompt=(
         "You are the Project Manager / Supervisor of an autonomous coding "
         "team. Your job is to take a high-level project requirement and "
         "orchestrate its implementation through your workers.\n\n"
+        "AVAILABLE TOOLS:\n"
+        "- file_read_tool(path): Read a file's contents.\n"
+        "- list_workspace_tool(path): List files/directories in the workspace.\n\n"
+        "CRITICAL -- YOUR FIRST TURN:\n"
+        "1. Call file_read_tool(\"proposal.md\") to read the full project proposal.\n"
+        "2. Call list_workspace_tool(\".\") to see what already exists.\n"
+        "3. Call list_workspace_tool(path=\".opencode/skill\") to discover available skills.\n"
+        "4. For each relevant skill, read its SKILL.md using:\n"
+        "   file_read_tool(path=\".opencode/skill/<skill-name>/SKILL.md\")\n"
+        "   Key skills to check:\n"
+        "   - macos-menubar-tuist-app: macOS menubar app patterns (directly relevant!)\n"
+        "   - swiftui-ui-patterns: SwiftUI UI patterns for any native UI work\n"
+        "   - swiftui-liquid-glass: iOS 26+ Liquid Glass UI effects\n"
+        "   - react-native-best-practices: RN performance optimization\n"
+        "   - github: GitHub PR and commit conventions\n"
+        "   - github-actions: CI build artifact patterns\n"
+        "5. Break the task into clear milestones, referencing the skills each worker should use.\n"
+        "6. When delegating to a worker, tell them which skills to read.\n\n"
         "YOUR WORKERS:\n"
         "- Backend_Coder: writes application logic, data models, APIs, core code.\n"
         "- UI_Artist: handles visual presentation, styles, templates, front-end.\n"
@@ -285,48 +374,74 @@ def supervisor_node(state: TeamState):
         "when all checks pass.\n\n"
         "WORKFLOW:\n"
         "1. Break the task into clear milestones (share them in your first message).\n"
-        "2. For each milestone, delegate to the appropriate worker.\n"
+        "2. For each milestone, delegate to the appropriate worker and tell them which skills to use.\n"
         "3. After EVERY code change, delegate to Tester_QA for verification.\n"
         "4. If Tester_QA reports failures, send the error feedback back to the "
         "coder that made the changes.\n"
-        "5. If Tester_QA reports \"ALL CHECKS PASSED — COMMITTED\", move to "
+        "5. If Tester_QA reports \"ALL CHECKS PASSED -- COMMITTED\", move to "
         "the next milestone.\n"
         "6. Continue until all milestones are complete.\n\n"
         "CRITICAL:\n"
-        "- Never delegate to two workers simultaneously — sequential only.\n"
+        "- Never delegate to two workers simultaneously -- sequential only.\n"
         "- Never skip the Tester_QA step after code changes.\n"
-        "- When the project is fully complete, respond with \"PROJECT COMPLETE\".\n\n"
-        "IMPORTANT: You MUST append a raw JSON block tracking the next step on its own line at the absolute end of your reply:\n"
-        '{"next_step": "Tester_QA"}   (Choose strictly from: "Backend_Coder", "UI_Artist", "Tester_QA", "FINISH")'
+        "- When the project is fully complete, respond with \"PROJECT COMPLETE\".\n"
+        "- **You MUST read proposal.md and .opencode/skill/** using file_read_tool -- do NOT guess contents.\n\n"
+        "IMPORTANT: You MUST append a raw JSON block on its own line at the very "
+        "end of your final reply (after all milestones / planning text):\n"
+        '{"next_step": "Backend_Coder"}   (Choose strictly from: "Backend_Coder", "UI_Artist", "Tester_QA", "FINISH")'
+    ),
+    name="Supervisor",
+)
+
+
+def supervisor_node(state: TeamState):
+    """Invoke the supervisor ReAct agent (with tools for reading files / listing
+    workspace), parse the routing JSON from its output, and return the next destination."""
+    import time
+
+    # Rate-limited invoke of the supervisor agent
+    for attempt in range(1, 16):
+        try:
+            response = supervisor_agent.invoke(state)
+            break
+        except Exception as exc:
+            if "429" in str(exc) or "Too Many Requests" in str(exc):
+                wait = 90
+                print(f"⚠️  [Supervisor Rate-Limited] Retrying ({attempt}/15) in {wait}s...")
+                time.sleep(wait)
+            else:
+                raise exc
+    else:
+        raise RuntimeError("Supervisor failed after persistent rate limits.")
+
+    # Extract routing decision from the LAST AIMessage that has content
+    next_step = "Tester_QA"  # safe default
+    for msg in reversed(response["messages"]):
+        if isinstance(msg, AIMessage) and msg.content:
+            content = msg.content.strip()
+            start = content.rfind("{")
+            if start != -1:
+                end = content.find("}", start)
+                if end != -1:
+                    try:
+                        parsed = json.loads(content[start:end + 1])
+                        candidate = parsed.get("next_step")
+                        if candidate in ["Backend_Coder", "UI_Artist", "Tester_QA", "FINISH"]:
+                            next_step = candidate
+                    except Exception:
+                        pass
+            break
+
+    # Safety Guard: prevent premature FINISH before any tests pass
+    has_passed_tests = any(
+        "ALL CHECKS PASSED" in getattr(m, "content", "") for m in response["messages"]
     )
-
-    messages = [HumanMessage(content=system_prompt)] + state["messages"]
-    response = llm.invoke(messages)
-    content = response.content.strip()
-    
-    # Default fallback to testing layout if schema extraction trips
-    next_step = "Tester_QA"
-    
-    start = content.rfind("{")
-    if start != -1:
-        end = content.find("}", start)
-        if end != -1:
-            try:
-                parsed = json.loads(content[start:end+1])
-                candidate = parsed.get("next_step")
-                if candidate in ["Backend_Coder", "UI_Artist", "Tester_QA", "FINISH"]:
-                    next_step = candidate
-            except Exception:
-                pass
-
-    # Safety Guard: Intercept immediate exits before any QA confirmation passes
-    has_passed_tests = any("ALL CHECKS PASSED" in getattr(m, "content", "") for m in state["messages"])
     if next_step == "FINISH" and not has_passed_tests:
         next_step = "Tester_QA"
-    
+
     return {
-        "messages": [AIMessage(content=f"Supervisor designated: {next_step}")],
-        "next_destination": next_step
+        "messages": response["messages"],
+        "next_destination": next_step,
     }
 
 
@@ -395,7 +510,7 @@ def _get_compiled_graph():
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                          P U B L I C   A P I                                ║
-# ╚══════════════════════════════════════════════════════════════════════════════╗
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 def run_autonomous_team(
     task: str,
@@ -435,6 +550,9 @@ def run_autonomous_team(
     print(f"  TASK    : {task[:80]}{'...' if len(task) > 80 else ''}")
     print(f"  CHECKPT : {CHECKPOINT_DB}")
     print(f"  LIMIT   : {RECURSION_LIMIT} turns")
+    if not resume:
+        _clean_stale_outputs()
+
     print(f"{'═'*70}\n")
 
     try:
@@ -443,7 +561,7 @@ def run_autonomous_team(
         for event in _get_compiled_graph().stream(initial_state, config=config, stream_mode="values"):
             if "messages" in event and event["messages"]:
                 latest_message = event["messages"][-1]
-                sender = getattr(latest_message, "name", latest_message.__class__.__name__)
+                sender = getattr(latest_message, "name", None) or latest_message.__class__.__name__
                 if sender == "HumanMessage":
                     continue
                 
@@ -458,7 +576,7 @@ def run_autonomous_team(
         result = _get_compiled_graph().get_state(config).values
     except Exception as exc:
         return (
-            f"ORCHESTRATION HALTED — {exc}\n\n"
+            f"ORCHESTRATION HALTED -- {exc}\n\n"
             f"To resume, call:\n"
             f"  run_autonomous_team(task=None, thread_id='{thread_id}', resume=True)"
         )
@@ -471,6 +589,23 @@ def run_autonomous_team(
             break
 
     return last_ai or "No final output produced."
+
+
+def _clean_stale_outputs() -> None:
+    """Delete previously-generated orchestrator files so the AI agents
+    start from a clean slate.  Skips files outside the workspace."""
+    import shutil
+    targets = [
+        WORKSPACE_PATH / "orchestrator",
+        WORKSPACE_PATH / "requirements.txt",
+    ]
+    for t in targets:
+        if t.is_dir():
+            shutil.rmtree(t, ignore_errors=True)
+            print(f"🧹 Removed stale directory: {t.name}/")
+        elif t.is_file():
+            t.unlink(missing_ok=True)
+            print(f"🧹 Removed stale file: {t.name}")
 
 
 def resume_last_run() -> str:
@@ -499,7 +634,7 @@ if __name__ == "__main__":
     TASK_PROMPT = (
         "Initialize the 'Open Cowork' v0.1 Foundation project.\n\n"
         "CONTEXT from proposal.md: Build an open-source Mac AI desktop agent "
-        "— a menubar app with a floating chat panel that controls macOS via "
+        "-- a menubar app with a floating chat panel that controls macOS via "
         "the Accessibility API (AXUIElement) and CGEvent for mouse/keyboard.\n\n"
         "DELIVERABLES:\n"
         "1. Python orchestrator skeleton with FastAPI endpoints (POST /task, "

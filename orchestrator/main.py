@@ -1,152 +1,74 @@
-"""FastAPI application for the Open Cowork orchestrator.
+"""FastAPI entry point for the Open Cowork orchestrator.
 
-Exposes REST and WebSocket endpoints for task dispatch, status queries,
-and real-time action streaming.  Keeps the orchestrator state in-memory
-for v0.1; persistent storage will be wired in a later milestone.
+Defines HTTP endpoints for task submission and status queries, as well as a
+WebSocket endpoint for real‑time streaming of agent actions.
 """
 
-from __future__ import annotations
-
-import asyncio
-import json
-import logging
+from fastapi import FastAPI, WebSocket, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import uuid
-from contextlib import asynccontextmanager
-from typing import Any
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
+from .agent_loop import AgentLoop
+from .storage import TaskStorage
 
-from orchestrator.agent_loop import AgentLoop, TaskState
-from orchestrator.cost_tracker import CostTracker
-from orchestrator.safety import SafetyGuard
+app = FastAPI(title="Open Cowork Orchestrator")
 
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
-logger = logging.getLogger("orchestrator")
-
-# ---------------------------------------------------------------------------
-# In-memory stores (v0.1 – ephemeral)
-# ---------------------------------------------------------------------------
-_tasks: dict[str, TaskState] = {}
-_cost_tracker = CostTracker()
-_safety = SafetyGuard()
+# Simple in‑memory storage (could be swapped for SQLite later)
+storage = TaskStorage()
+agent_loop = AgentLoop(storage)
 
 
-# ---------------------------------------------------------------------------
-# FastAPI lifespan
-# ---------------------------------------------------------------------------
-@asynccontextmanager
-async def lifespan(app: FastAPI):  # noqa: D401
-    """Startup / shutdown hook."""
-    logger.info("Orchestrator starting up …")
-    yield
-    logger.info("Orchestrator shutting down …")
+class TaskRequest(BaseModel):
+    """Payload for creating a new task."""
+
+    prompt: str
+    # Additional fields (e.g., model, safety_mode) could be added here.
 
 
-app = FastAPI(
-    title="Open Cowork Orchestrator",
-    version="0.1.0",
-    lifespan=lifespan,
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-# ---------------------------------------------------------------------------
-# REST endpoints
-# ---------------------------------------------------------------------------
 @app.post("/task")
-async def create_task(payload: dict[str, Any]) -> dict[str, Any]:
-    """Enqueue a new desktop-automation task.
+async def create_task(request: TaskRequest):
+    """Create a new task and start the agent loop.
 
-    Body (JSON):
-        {
-            "instruction": "Open Safari and search for ...",
-            "model": "claude-sonnet-4",   # optional
-            "provider": "anthropic",       # optional
-        }
-
-    Returns:
-        { "task_id": "<uuid>", "status": "queued" }
+    Returns a JSON object containing the generated ``task_id``.
     """
     task_id = str(uuid.uuid4())
-    instruction = payload.get("instruction", "")
-    model = payload.get("model")
-    provider = payload.get("provider")
-
-    state = TaskState(
-        task_id=task_id,
-        instruction=instruction,
-        model=model,
-        provider=provider,
-        status="queued",
-    )
-    _tasks[task_id] = state
-
-    # Kick off the agent loop asynchronously.
-    asyncio.create_task(
-        AgentLoop.run(
-            task_id=task_id,
-            state=state,
-            tracker=_cost_tracker,
-            guard=_safety,
-        )
-    )
-
-    logger.info("Task %s created: %r", task_id, instruction)
-    return {"task_id": task_id, "status": "queued"}
+    await storage.save_task(task_id, {"prompt": request.prompt, "status": "queued"})
+    # Fire‑and‑forget the agent loop for this task.
+    agent_loop.start_task(task_id, request.prompt)
+    return JSONResponse(content={"task_id": task_id})
 
 
 @app.get("/status/{task_id}")
-async def get_status(task_id: str) -> dict[str, Any]:
-    """Return the current state of a task."""
-    state = _tasks.get(task_id)
-    if state is None:
-        return {"task_id": task_id, "status": "unknown"}
-    return {
-        "task_id": state.task_id,
-        "status": state.status,
-        "instruction": state.instruction,
-        "model": state.model,
-        "provider": state.provider,
-        "cost_usd": _cost_tracker.get_cost(task_id),
-    }
+async def get_status(task_id: str):
+    """Return the current status of a task.
+
+    Raises ``404`` if the task does not exist.
+    """
+    task = await storage.get_task(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return JSONResponse(content={"task_id": task_id, "status": task.get("status")})
 
 
-# ---------------------------------------------------------------------------
-# WebSocket endpoint
-# ---------------------------------------------------------------------------
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket) -> None:
-    """Stream real-time task events to connected clients.
+@app.websocket("/ws/{task_id}")
+async def websocket_endpoint(websocket: WebSocket, task_id: str):
+    """WebSocket stream for a specific task.
 
-    Clients receive JSON messages shaped like:
-        { "event": "action", "task_id": "...", "data": {...} }
-        { "event": "cost_update", "task_id": "...", "usd": 0.0012 }
-        { "event": "status_change", "task_id": "...", "status": "running" }
+    The client receives JSON messages with ``event`` and ``data`` fields.
     """
     await websocket.accept()
-    logger.info("WebSocket client connected")
+    if not await storage.task_exists(task_id):
+        await websocket.send_json({"event": "error", "data": "Task not found"})
+        await websocket.close()
+        return
+    # Register the websocket with the agent loop so it receives updates.
+    await agent_loop.register_ws(task_id, websocket)
     try:
         while True:
-            # In v0.1 we simply echo back a heartbeat; the agent loop
-            # will push events through a shared queue in a future rev.
-            message = await websocket.receive_text()
-            data = json.loads(message)
-            await websocket.send_json({"echo": data})
-    except WebSocketDisconnect:
-        logger.info("WebSocket client disconnected")
-    except Exception as exc:  # pragma: no cover
-        logger.exception("WebSocket error: %s", exc)
+            # Keep the connection alive; the agent loop pushes messages.
+            await websocket.receive_text()
+    except Exception:
+        # Client disconnected – clean up.
+        await agent_loop.unregister_ws(task_id, websocket)
+        await websocket.close()
