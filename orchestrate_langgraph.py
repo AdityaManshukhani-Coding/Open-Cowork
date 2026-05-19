@@ -33,14 +33,14 @@ TESTER_KEY = os.environ.get(
     "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",
 )
 
-MANAGER_MODEL = "openai/gpt-oss-120b:free"
-WORKER_MODEL = "openai/gpt-oss-120b:free"
+MANAGER_MODEL = "deepseek/deepseek-v4-flash:free"
+WORKER_MODEL = "deepseek/deepseek-v4-flash:free"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RESILIENCE SETTINGS
 # ─────────────────────────────────────────────────────────────────────────────
 
-RECURSION_LIMIT = 400
+RECURSION_LIMIT = 5000
 os.environ.setdefault("LITELLM_NUM_RETRIES", "1000")
 os.environ.setdefault("LITELLM_MAX_RETRY_DELAY", "90")
 os.environ.setdefault("LITELLM_REQUEST_TIMEOUT", "300")
@@ -400,19 +400,17 @@ def supervisor_node(state: TeamState):
     import time
 
     # Rate-limited invoke of the supervisor agent
-    for attempt in range(1, 16):
+    for attempt in range(1, 51):
         try:
             response = supervisor_agent.invoke(state)
             break
         except Exception as exc:
-            if "429" in str(exc) or "Too Many Requests" in str(exc):
-                wait = 90
-                print(f"⚠️  [Supervisor Rate-Limited] Retrying ({attempt}/15) in {wait}s...")
-                time.sleep(wait)
-            else:
-                raise exc
+            wait = min(10 * (1.5 ** (attempt - 1)), 120)
+            print(f"⚠️  [Supervisor] Error (attempt {attempt}/50): {exc}")
+            print(f"⏳  Retrying in {wait:.0f}s...")
+            time.sleep(wait)
     else:
-        raise RuntimeError("Supervisor failed after persistent rate limits.")
+        raise RuntimeError("Supervisor failed after 50 attempts.")
 
     # Extract routing decision from the LAST AIMessage that has content
     next_step = "Tester_QA"  # safe default
@@ -455,7 +453,7 @@ def _get_compiled_graph():
     def _rate_limited_invoke(agent, label: str, state: TeamState):
         """Invoke *agent* with retry on API rate limits and explicitly reset routing state."""
         import time
-        for attempt in range(1, 16):
+        for attempt in range(1, 51):
             try:
                 response = agent.invoke(state)
                 return {
@@ -463,13 +461,11 @@ def _get_compiled_graph():
                     "next_destination": "supervisor"
                 }
             except Exception as exc:
-                if "429" in str(exc) or "Too Many Requests" in str(exc):
-                    wait = 90  
-                    print(f"⚠️  [{label} Rate-Limited] Retrying ({attempt}/15) in {wait}s...")
-                    time.sleep(wait)
-                else:
-                    raise exc
-        raise RuntimeError(f"{label} failed after persistent rate limits.")
+                wait = min(10 * (1.5 ** (attempt - 1)), 120)
+                print(f"⚠️  [{label}] Error (attempt {attempt}/50): {exc}")
+                print(f"⏳  Retrying in {wait:.0f}s...")
+                time.sleep(wait)
+        raise RuntimeError(f"{label} failed after 50 attempts.")
 
     def run_backend(state: TeamState):
         return _rate_limited_invoke(backend_coder, "Backend Coder", state)

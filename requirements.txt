@@ -1,4 +1,19 @@
-fastapi
-uvicorn[standard]
-websockets
-pydantic
+# Open Cowork — Agent Orchestrator Dependencies
+# Install with:  pip install -r requirements.txt
+
+# Web framework & server
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+
+# WebSocket support
+websockets>=14.0
+
+# AI provider SDKs
+anthropic>=0.60.0
+openai>=1.70.0
+
+# HTTP client (used by the Ollama provider)
+httpx>=0.28.0
+
+# Data validation (used by FastAPI)
+pydantic>=2.10.0
