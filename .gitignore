@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+orchestrator/__pycache__/
+
+# Swift / SPM
+.build/
+Package.resolved
+
+# Run artifacts
+run.log
+agent_checkpoints.db
+agent_checkpoints.db-shm
+agent_checkpoints.db-wal
+
+# OS
+.DS_Store
