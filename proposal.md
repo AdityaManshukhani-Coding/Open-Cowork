@@ -80,9 +80,10 @@ This dual-layer approach means the agent can control **any** app on your Mac —
 - Read what's currently on screen and act on it
 
 ### 🔑 Bring Your Own Key (BYOK)
-- Anthropic (Claude), OpenAI (GPT), Google (Gemini), DeepSeek, Mistral
-- Ollama and LM Studio for fully local, zero-cost operation
-- OpenRouter for unified access to 100+ models
+- **Any OpenAI-compatible API** — configure base URL + API key for any provider
+- **AI Providers supported:** Anthropic, OpenAI, Google (Gemini), DeepSeek, Mistral, Cohere, xAI (Grok), Perplexity, Together AI, Groq, Deep Infra, Fireworks AI, Amazon Bedrock, Azure OpenAI, Hugging Face, Nvidia, Cerebras, NovitaAI, and 80+ more through OpenRouter
+- **Local / zero-cost:** Ollama, LM Studio, llama.cpp for fully local operation
+- **OpenRouter hub:** Unified access to 200+ models across 80+ providers including 302.AI, Abacus, AIHubMix, Alibaba, Amazon Bedrock, Anthropic, Atomic Chat, Azure OpenAI, Bailing, Baseten, Berget.AI, Cerebras, Chutes, Clarifai, CloudFerro Sherlock, Cloudflare AI Gateway, Cohere, Cortecs, D.Run, Deep Infra, DeepSeek, DigitalOcean, Dinference, evroc, FastRouter, Fireworks AI, Firmware, Friendli, FrogBot, GitHub Copilot, GitLab Duo, Google, Google Vertex AI, Groq, Helicone, HPC-AI, Hugging Face, iFlow, Inception, Inference, IO.NET, Jiekou.AI, Kilo Gateway, Kimi For Coding, KUAE Cloud, Llama, LMStudio, llama.cpp, LucidQuery AI, Meganova, MiniMax, Mistral, Mixlayer, Moark, ModelScope, Moonshot AI, Morph, NanoGPT, Nebius Token Factory, Nova, NovitaAI, Nvidia, Ollama, OpenAI, OpenRouter, OVHcloud, Perplexity, Poe, Privatemode AI, QiHang, Qiniu, Regolo AI, Requesty, SAP AI Core, Scaleway, SiliconFlow, STACKIT, StepFun, submodel, Synthetic, Tencent, The Grid AI, Together AI, Upstage, v0, Venice AI, Vercel AI Gateway, Vertex, Vivgrid, Vultr, Wafer, Weights & Biases, xAI (Grok), Xiaomi, Z.AI, ZenMux, Zhipu AI, and any custom OpenAI-compatible endpoint
 - The app is a zero-margin orchestration layer — every dollar goes to your provider
 - Switch models mid-task, or use different models for different task types
 
@@ -276,7 +277,7 @@ These are the non-negotiables. The app is not ready to ship without all of these
 - App launching, window focus, and switching
 
 **Model & cost**
-- BYOK: Anthropic, OpenAI, Gemini, DeepSeek, Ollama — at minimum
+- BYOK: Any OpenAI-compatible API — Anthropic, OpenAI, Google (Gemini), DeepSeek, Mistral, Cohere, xAI (Grok), Perplexity, Together AI, Groq, Deep Infra, Fireworks AI, Ollama, LM Studio, and 80+ providers via OpenRouter — at minimum
 - Live token and estimated cost display per task
 - Zero markup — users pay providers directly
 
@@ -389,7 +390,7 @@ Apache 2.0. Permissive enough to encourage commercial products building on top, 
 ### v0.1 — Foundation (launch)
 - Native menubar app with chat panel
 - macOS Accessibility API control
-- BYOK: Anthropic + OpenAI + Ollama
+- BYOK: Any OpenAI-compatible API (Anthropic, OpenAI, Google, DeepSeek, Mistral, Cohere, xAI, Together AI, Groq, Fireworks AI, Ollama, LM Studio, and 80+ more via OpenRouter)
 - Live action log
 - Approve-before-action safety mode
 - Live cost display

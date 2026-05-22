@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import json
 import os
+import signal
 import subprocess
 import sys
 from datetime import datetime
@@ -11,30 +12,18 @@ from typing import Annotated, List, Optional, TypedDict
 from langgraph.graph.message import add_messages
 
 # ─────────────────────────────────────────────────────────────────────────────
-# API CONFIGURATION
+# API CONFIGURATION — Fireworks AI
 # ─────────────────────────────────────────────────────────────────────────────
 
-OPENROUTER_API_BASE = "https://openrouter.ai/api/v1"
+FIREWORKS_API_BASE = "https://api.fireworks.ai/inference/v1"
 
-MANAGER_API_KEY = os.environ.get(
-    "OPENROUTER_MANAGER_KEY",
-    "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",
-)
-BACKEND_CODER_KEY = os.environ.get(
-    "OPENROUTER_BACKEND_KEY",
-    "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",
-)
-UI_ARTIST_KEY = os.environ.get(
-    "OPENROUTER_UI_KEY",
-    "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",
-)
-TESTER_KEY = os.environ.get(
-    "OPENROUTER_TESTER_KEY",
-    "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",
+FIREWORKS_API_KEY = os.environ.get(
+    "FIREWORKS_API_KEY",
+    "",
 )
 
-MANAGER_MODEL = "deepseek/deepseek-v4-flash:free"
-WORKER_MODEL = "deepseek/deepseek-v4-flash:free"
+MANAGER_MODEL = "accounts/fireworks/models/deepseek-v4-pro"
+WORKER_MODEL = "accounts/fireworks/models/deepseek-v4-pro"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RESILIENCE SETTINGS
@@ -204,21 +193,62 @@ def list_workspace_tool(path: str = ".") -> str:
 # ║                           L L M   F A C T O R Y                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
-def _build_llm(api_key: str, model: str, temperature: float) -> ChatOpenAI:
-    """Return a ChatOpenAI instance pointed at OpenRouter with clean tracking headers."""
-    return ChatOpenAI(
-        api_key=api_key,
-        base_url=OPENROUTER_API_BASE,
+import types
+
+
+def _build_llm(model: str, temperature: float) -> ChatOpenAI:
+    """Return a ChatOpenAI instance pointed at Fireworks AI.
+    
+    Uses FIREWORKS_API_KEY from config for authentication. All agents share
+    the same API key since Fireworks is a single-provider setup.
+    
+    PATCH: The returned instance has its `_generate` method wrapped to sanitize
+    messages before EVERY API call. This catches provider 400 errors that happen
+    inside the create_react_agent ReAct loop when AIMessages with tool_calls and
+    empty content are fed back to the model between loop iterations.
+    """
+    llm = ChatOpenAI(
+        api_key=FIREWORKS_API_KEY,
+        base_url=FIREWORKS_API_BASE,
         model=model,
         temperature=temperature,
         max_tokens=8192,
-        timeout=120,
+        timeout=300,
         max_retries=1000,
-        default_headers={
-            "HTTP-Referer": "https://github.com/aditya-manshukhani/open-cowork",
-            "X-Title": "Open Cowork Orchestrator"
-        }
     )
+    # ── Patch _generate to sanitize messages before every API call ──
+    original_generate = llm._generate
+
+    def _sanitized_generate(self, messages, stop=None, run_manager=None, **kwargs):
+        messages = _sanitize_messages(list(messages))
+        return original_generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+
+    llm._generate = types.MethodType(_sanitized_generate, llm)
+    return llm
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                  M E S S A G E   S A N I T I Z E R                            ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+def _sanitize_messages(messages: list) -> list:
+    """Ensure every message has a valid string content field.
+    Some providers (e.g. Fireworks AI) reject messages with null/empty content.
+    This is common when AIMessages have tool_calls but no text content."""
+    sanitized = []
+    for msg in messages:
+        if isinstance(msg, (AIMessage, HumanMessage, ToolMessage)):
+            # Crucible rejects null, empty list, or empty string content
+            if msg.content is None:
+                msg.content = "..."
+            elif isinstance(msg.content, list):
+                if len(msg.content) == 0:
+                    msg.content = "..."
+            elif isinstance(msg.content, str) and msg.content.strip() == "":
+                msg.content = "..."
+        sanitized.append(msg)
+    return sanitized
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -313,7 +343,7 @@ def _content_is_substantial(messages: list) -> tuple[bool, list[str]]:
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 backend_coder = create_react_agent(
-    model=_build_llm(BACKEND_CODER_KEY, WORKER_MODEL, temperature=0.1),
+    model=_build_llm(WORKER_MODEL, temperature=0.1),
     tools=[file_read_tool, file_write_tool, shell_tool, list_workspace_tool],
     prompt=(
         "You are the Backend Coder. You write production-quality Swift code.\n\n"
@@ -353,13 +383,18 @@ backend_coder = create_react_agent(
         "  files (like Package.swift) first.\n"
         '- Use shell_tool(command="swift build") to compile after writing files.\n'
         "- If a dependency is needed, add it to Package.swift first, then run swift build.\n"
-        "- Write SWIFT code for the macOS native app. Do NOT write Python unless the Manager explicitly asks for it."
+        "- Write SWIFT code for the macOS native app. Do NOT write Python unless the Manager explicitly asks for it.\n"
+        "- SKILLS: Consult `.opencode/skill/swiftui-liquid-glass/` for Liquid Glass design patterns\n"
+        "  and `.opencode/skill/macos-menubar-tuist-app/` for macOS menubar app architecture.\n"
+        "  These files contain reference implementations and design guidance.\n"
+        "  Use `file_read_tool` to read any skill reference file before implementing.\n"
+        "  The skill files are more reliable than guessing API patterns."
     ),
     name="Backend_Coder",
 )
 
 ui_artist = create_react_agent(
-    model=_build_llm(UI_ARTIST_KEY, WORKER_MODEL, temperature=0.3),
+    model=_build_llm(WORKER_MODEL, temperature=0.3),
     tools=[file_read_tool, file_write_tool, list_workspace_tool, shell_tool],
     prompt=(
         "You are the UI Artist. You build native SwiftUI views for macOS using "
@@ -430,13 +465,19 @@ ui_artist = create_react_agent(
         "- Use file_write_tool for every file. Wait for tool confirmation.\n"
         "- Use shell_tool to verify views compile with swift build.\n"
         "- Use native SwiftUI components (MenuBarExtra, List, TextField, Button).\n"
-        "- If the Manager assigns a UI task, the view MUST use Liquid Glass APIs."
+        "- If the Manager assigns a UI task, the view MUST use Liquid Glass APIs.\n"
+        "- SKILLS: Consult `.opencode/skill/swiftui-liquid-glass/references/liquid-glass.md`\n"
+        "  for the complete Liquid Glass design reference (glassEffect, GlassEffectContainer,\n"
+        "  glassProminent, morphing transitions, tinting). Also consult\n"
+        "  `.opencode/skill/swiftui-ui-patterns/references/` for specific SwiftUI component\n"
+        "  patterns (menubar, sheets, lists, grids, controls, etc.).\n"
+        "  Use `file_read_tool` to read these files before implementing."
     ),
     name="UI_Artist",
 )
 
 tester_qa = create_react_agent(
-    model=_build_llm(TESTER_KEY, WORKER_MODEL, temperature=0.0),
+    model=_build_llm(WORKER_MODEL, temperature=0.0),
     tools=[shell_tool, file_read_tool, list_workspace_tool, file_write_tool, git_snapshot_tool],
     prompt=(
         "You are the Tester / QA for the Open Cowork project. You are a strict, "
@@ -479,7 +520,9 @@ tester_qa = create_react_agent(
         "  file_write_tool as a last resort. Then verify and commit.\n\n"
         "FAILURE MODE:\n"
         '  Saying "All files look good." without calling shell_tool or git_snapshot_tool.\n'
-        "  You MUST run actual verification commands."
+        "  You MUST run actual verification commands.\n"
+        "- SKILLS: Check `.opencode/skill/` for quality standards. Use\n"
+        "  `file_read_tool` to read skill references during verification."
     ),
     name="Tester_QA",
 )
@@ -489,7 +532,7 @@ tester_qa = create_react_agent(
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 supervisor_agent = create_react_agent(
-    model=_build_llm(MANAGER_API_KEY, MANAGER_MODEL, temperature=0.2),
+    model=_build_llm(MANAGER_MODEL, temperature=0.2),
     tools=[file_read_tool, list_workspace_tool],
     prompt=(
         "You are the Project Manager. Your job is to read proposal.md, plan "
@@ -614,6 +657,18 @@ supervisor_agent = create_react_agent(
         "- Python (FastAPI) only if backend orchestrator is needed\n\n"
 
         "═══════════════════════════════════════════════════════════════════════════\n"
+        "═══════════════════════════════════════════════════════════════════════════\n"
+        "SKILL REFERENCES (.opencode/skill/)\n"
+        "═══════════════════════════════════════════════════════════════════════════\n"
+        "The `.opencode/skill/` directory contains reference implementations:\n"
+        "- swiftui-liquid-glass/: Liquid Glass design patterns for macOS 26+\n"
+        "- macos-menubar-tuist-app/: macOS menubar app architecture and Tuist setup\n"
+        "- swiftui-ui-patterns/: SwiftUI component patterns (menubar, sheets, lists, controls)\n"
+        "- github/: GitHub workflow patterns (stacked PRs)\n"
+        "Always tell workers to read the relevant skill files before implementing.\n"
+        "When assigning UI tasks, mention: 'Consult `.opencode/skill/swiftui-liquid-glass/` for Liquid Glass APIs.'\n"
+        "When assigning backend tasks, mention: 'Check `.opencode/skill/macos-menubar-tuist-app/` for architecture patterns.'\n"
+        "\n"
         "CRITICAL RULES\n"
         "═══════════════════════════════════════════════════════════════════════════\n"
         "- NEVER assign more than ONE task per delegation.\n"
@@ -643,12 +698,30 @@ def supervisor_node(state: TeamState):
     worker with corrective feedback instead of letting the hallucination pass."""
     import time
 
+    # -- Sanitize messages to prevent Crucible 400 errors --
+    sanitized_messages = _sanitize_messages(state.get("messages", []))
+    state["messages"] = sanitized_messages
+
     # -- Rate-limited invoke of the supervisor agent --
     for attempt in range(1, 51):
         try:
             response = supervisor_agent.invoke(state)
             break
         except Exception as exc:
+            error_str = str(exc)
+            # Detect Fireworks AI rate limit (429) — abort immediately
+            if "429" in error_str and "Rate limit" in error_str:
+                msg = (
+                    "\n╔══════════════════════════════════════════════════════════════╗\n"
+                    "║  FIREWORKS AI RATE LIMIT EXCEEDED                         ║\n"
+                    "║                                                          ║\n"
+                    "║  Check your Fireworks AI account for usage limits.        ║\n"
+                    "║  https://fireworks.ai/account                            ║\n"
+                    "║  You have $6 in credits — budget them wisely.            ║\n"
+                    "╚══════════════════════════════════════════════════════════════╝"
+                )
+                print(msg)
+                raise RuntimeError("Rate limit exceeded. Check credits at https://fireworks.ai/account")
             wait = min(10 * (1.5 ** (attempt - 1)), 120)
             print(f"[Supervisor] Error (attempt {attempt}/50): {exc}")
             print(f"Retrying in {wait:.0f}s...")
@@ -725,6 +798,9 @@ def supervisor_node(state: TeamState):
                     "messages": [correction_msg],
                     "next_destination": last_worker,
                     "worker_retries": worker_retries,
+                    "task_description": state.get("task_description", ""),
+                    "project_root": state.get("project_root", ""),
+                    "last_verified_files": state.get("last_verified_files", []),
                 }
             else:
                 print(f"[Verifier] {last_worker} failed after {attempt_count} attempts. Giving up and proceeding.")
@@ -758,6 +834,9 @@ def supervisor_node(state: TeamState):
                         "messages": [correction_msg],
                         "next_destination": last_worker,
                         "worker_retries": worker_retries,
+                        "task_description": state.get("task_description", ""),
+                        "project_root": state.get("project_root", ""),
+                        "last_verified_files": state.get("last_verified_files", []),
                     }
                 else:
                     print(f"[Verifier] {last_worker} still writing stubs after {attempt_count} attempts. Giving up.")
@@ -781,6 +860,9 @@ def _get_compiled_graph():
     def _rate_limited_invoke(agent, label: str, state: TeamState):
         """Invoke *agent* with retry on API rate limits and explicitly reset routing state."""
         import time
+        # Sanitize messages to prevent Crucible 400 errors
+        sanitized_messages = _sanitize_messages(state.get("messages", []))
+        state["messages"] = sanitized_messages
         for attempt in range(1, 51):
             try:
                 response = agent.invoke(state)
@@ -789,6 +871,20 @@ def _get_compiled_graph():
                     "next_destination": "supervisor"
                 }
             except Exception as exc:
+                error_str = str(exc)
+                # Detect OpenRouter rate limit (429) — abort immediately
+                if "429" in error_str and "Rate limit" in error_str:
+                    msg = (
+                        "\n╔══════════════════════════════════════════════════════════════╗\n"
+                        "║  FIREWORKS AI RATE LIMIT EXCEEDED        ║\n"
+                        "║                                                          ║\n"
+                        "║  Check your Fireworks AI account for usage limits.            ║\n"
+                        "║  You have $6 in credits — budget them wisely.                           ║\n"
+                        "║  https://fireworks.ai/account                   ║\n"
+                        "╚══════════════════════════════════════════════════════════════╝"
+                    )
+                    print(msg)
+                    raise RuntimeError(f"{label} stopped: Rate limit exceeded. Check credits at https://fireworks.ai/account")
                 wait = min(10 * (1.5 ** (attempt - 1)), 120)
                 print(f"[{label}] Error (attempt {attempt}/50): {exc}")
                 print(f"Retrying in {wait:.0f}s...")
@@ -881,8 +977,16 @@ def run_autonomous_team(
 
     print(f"{'='*70}\n")
 
+    # -- Block SIGINT/SIGQUIT so Ctrl+C from tail -f doesn't kill the process --
     try:
-        print("[System] Standing up OpenRouter agent communication lines...\n")
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGQUIT, signal.SIG_IGN)
+        signal.signal(signal.SIGHUP, signal.SIG_IGN)
+    except AttributeError:
+        pass  # SIGQUIT/SIGHUP not available on all platforms
+
+    try:
+        print("[System] Standing up Fireworks AI agent communication lines...\n")
 
         previous_msg_count = 0
         for event in _get_compiled_graph().stream(initial_state, config=config, stream_mode="values"):
@@ -904,6 +1008,9 @@ def run_autonomous_team(
 
         result = _get_compiled_graph().get_state(config).values
     except Exception as exc:
+        import traceback
+        print(f"\n!!! ORCHESTRATION CRASHED: {exc}")
+        print(f"Traceback:\n{traceback.format_exc()}")
         return (
             f"ORCHESTRATION HALTED -- {exc}\n\n"
             f"To resume, call:\n"
@@ -968,6 +1075,22 @@ def _latest_thread_id() -> Optional[str]:
 
 
 if __name__ == "__main__":
+    # ── Guard: fail fast if API key is missing ──
+    if not FIREWORKS_API_KEY:
+        print(
+            "\n"
+            "╔══════════════════════════════════════════════════════════════╗\n"
+            "║  FIREWORKS_API_KEY not set!                                ║\n"
+            "║                                                          ║\n"
+            "║  Export your Fireworks AI API key before running:         ║\n"
+            "║                                                          ║\n"
+            "║    export FIREWORKS_API_KEY='your-api-key-here'            ║\n"
+            "║                                                          ║\n"
+            "║  Get a key at: https://fireworks.ai/settings/users/api-keys║\n"
+            "╚══════════════════════════════════════════════════════════════╝\n"
+        )
+        sys.exit(1)
+
     TASK_PROMPT = (
         "Build the 'Open Cowork' v0.1 app as specified in proposal.md.\n\n"
         "CRITICAL FIRST STEP:\n"
