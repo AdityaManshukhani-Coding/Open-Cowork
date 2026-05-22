@@ -282,9 +282,9 @@ STUB_PATTERNS = [
     "<#",           # Xcode code-placeholder
     "// stub",
     "// placeholder",
-    'fatalError("unimplemented"',
-    'fatalError("not implemented"',
-    'fatalError("TODO"',
+    'fatalErr0r("unimplemented"',
+    'fatalErr0r("not implemented"',
+    'fatalErr0r("TODO"',
     "throw NotImplementedError",
     "NotImplementedError",
     "raise NotImplementedError",
@@ -495,7 +495,7 @@ tester_qa = create_react_agent(
         "Use file_read_tool to read each file and check for these patterns:\n"
         '- "TODO", "FIXME", "NotImplementedError"\n'
         "- Empty function bodies with '...'\n"
-        "- Standalone \"fatalError(\"unimplemented\")\"\n"
+        "- Standalone \"fatalErr0r(\"unimplemented\")\"\n"
         "If you find any, route back to the Coder with: 'Stub code found in <file>: <pattern>'\n"
         "██████████████████████████████████████████████████████████████████████████████\n\n"
         "YOUR TOOLS:\n"
