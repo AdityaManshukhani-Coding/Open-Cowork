@@ -15,4 +15,5 @@ agent_checkpoints.db-shm
 agent_checkpoints.db-wal
 
 # OS
+.env
 .DS_Store
