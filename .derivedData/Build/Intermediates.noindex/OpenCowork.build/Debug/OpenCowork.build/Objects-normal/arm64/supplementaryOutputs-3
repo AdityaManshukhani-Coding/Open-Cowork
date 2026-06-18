@@ -1,0 +1,30 @@
+{
+  "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Sources/Models/Skill.swift" : {
+    "const-values" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Skill.swiftconstvalues",
+    "dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Skill.d",
+    "diagnostics" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Skill.dia",
+    "object" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Skill.o",
+    "swift-dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Skill.swiftdeps"
+  },
+  "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Sources/Models/TaskSession.swift" : {
+    "const-values" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/TaskSession.swiftconstvalues",
+    "dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/TaskSession.d",
+    "diagnostics" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/TaskSession.dia",
+    "object" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/TaskSession.o",
+    "swift-dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/TaskSession.swiftdeps"
+  },
+  "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Sources/Models/Team.swift" : {
+    "const-values" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Team.swiftconstvalues",
+    "dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Team.d",
+    "diagnostics" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Team.dia",
+    "object" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Team.o",
+    "swift-dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/Team.swiftdeps"
+  },
+  "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Sources/OpenCoworkApp.swift" : {
+    "const-values" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/OpenCoworkApp.swiftconstvalues",
+    "dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/OpenCoworkApp.d",
+    "diagnostics" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/OpenCoworkApp.dia",
+    "object" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/OpenCoworkApp.o",
+    "swift-dependencies" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/OpenCowork.build/Debug/OpenCowork.build/Objects-normal/arm64/OpenCoworkApp.swiftdeps"
+  }
+}

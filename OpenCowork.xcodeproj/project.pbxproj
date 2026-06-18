@@ -1,0 +1,547 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01816A0FEDBEC48A7D09060B /* OpenCoworkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A695465E9448E9EA9DF662 /* OpenCoworkApp.swift */; };
+		051E34EB388620C7CEECC835 /* CreateTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A89575C4CD1DF6B67B6876 /* CreateTeamView.swift */; };
+		058D0F8A194A08FD32BF0CA0 /* SchedulerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971E79B9888FCDA31BDB09C9 /* SchedulerStore.swift */; };
+		0743C82A947CB2220D8B5B82 /* TuistBundle+OpenCowork.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9399F7AC89F4BBE31248598 /* TuistBundle+OpenCowork.swift */; };
+		0A274D27E4947DAB84C0A198 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C8D956941019F4BCA96AA4 /* Team.swift */; };
+		1457F1F4457EE770F116A928 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACA0E8A91DDCBCE9D85BE2C /* AppStore.swift */; };
+		1BB3AFAF060A638247C284BC /* ScheduledTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077CF7E5CCF713784F2E7770 /* ScheduledTask.swift */; };
+		1C28719CDFF52F08E1E9C3B1 /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76FF49DDDDACC4806DA66227 /* LLMClient.swift */; };
+		1FAAA9EEE26F334F10866243 /* placeholder.txt in Resources */ = {isa = PBXBuildFile; fileRef = D978E058F83FF22B22BBE70B /* placeholder.txt */; };
+		254AB33C9B377932D038B5D2 /* LLMSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E066386F5DC8EE33DF02336C /* LLMSelectionView.swift */; };
+		27DAB73AB29A5AD0BFFFCBFF /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F874717BB931AFCBDE9273C /* OnboardingView.swift */; };
+		3264AE778D6AA043C9EC4C5E /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FB35EADA6DE4A661AE43FA /* StatusItemController.swift */; };
+		3B33B1B8DBD15E233399B06F /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167574DEB316CDC197DA1034 /* MenuBarPopoverView.swift */; };
+		3DB243B29E16AC312E2464D8 /* TuistAssets+OpenCowork.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD54C83B338DA421E07C453 /* TuistAssets+OpenCowork.swift */; };
+		4462BA43374F53C5D38D39FB /* macOSControlClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBA8D8D6FB79F2BAF7850F5 /* macOSControlClient.swift */; };
+		59CBF64F61665D8C1EB44D3C /* CronMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA08331AB9B9187DF95F05 /* CronMatcher.swift */; };
+		5B58D5FABFF4E9BEF14D17CA /* TaskSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86027375F72A545F5F34FA6 /* TaskSession.swift */; };
+		621C5FF7DD4B2BBC2C4B436E /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F0238F0FB2896C06D5F804 /* ChatView.swift */; };
+		639C7A6AD85645490CBC6C30 /* SelectableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064A4B65BDB46BD6E397A577 /* SelectableTextView.swift */; };
+		6DFE4BF7463D529CFC601790 /* SearchChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD4479417C704FCFA0E475F /* SearchChatsView.swift */; };
+		73C2E7AA1B6BF5B6DBBC5AB6 /* Skill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7D2DCB95F399E2D3A9C1D3 /* Skill.swift */; };
+		83599EF9487055670F1079EF /* LLMConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469965AE789DEA65897BCA80 /* LLMConfig.swift */; };
+		86246DFF83A1D4189916F68E /* SkillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B4F8C6E50EAAA567949F2 /* SkillsView.swift */; };
+		8BB461DEB30C5BC1FE8959B7 /* PromptInjectionScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690D8F0AB2A6A4488EC942D /* PromptInjectionScanner.swift */; };
+		A0A95B3714F08155541082EF /* MainPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DC4FA0C275645820B0B410 /* MainPanelView.swift */; };
+		A199556C129F94E54A988C55 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3864F4968AEE469CB4196FC3 /* WelcomeView.swift */; };
+		A8262F87FFD47C75B2973ABD /* ProviderIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07ED050A382077CBD308F049 /* ProviderIcon.swift */; };
+		AF26394F84089AEC358729BE /* FileRollbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE900F44ED098A945CAB9CA /* FileRollbackManager.swift */; };
+		B832B2B87D81D98FBE997442 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B435AF7592A5526A8E98E /* HistoryView.swift */; };
+		D1EBACF9DF52923B6C5F2697 /* SafetyMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEAB18E8AFF07F4D87DF4C /* SafetyMode.swift */; };
+		F2DF93FE62850E0178B2ED1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FD153BC6839BA8A6047F9B5 /* Assets.xcassets */; };
+		F6F3F242A889381C7D9E9688 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B056F81800E733E122E6AF /* SettingsView.swift */; };
+		FE6DD15BA2F243DD0CE7E2D7 /* AgentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281F3991FA8EBD17340CD1B2 /* AgentStore.swift */; };
+		FEED1D192EA6658350164B92 /* SchedulerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516C0210074B3E7E3A26F155 /* SchedulerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C10F17EC65C218D61B8A9E78 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		064A4B65BDB46BD6E397A577 /* SelectableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableTextView.swift; sourceTree = "<group>"; };
+		077CF7E5CCF713784F2E7770 /* ScheduledTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledTask.swift; sourceTree = "<group>"; };
+		07ED050A382077CBD308F049 /* ProviderIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderIcon.swift; sourceTree = "<group>"; };
+		0CBA08331AB9B9187DF95F05 /* CronMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CronMatcher.swift; sourceTree = "<group>"; };
+		167574DEB316CDC197DA1034 /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
+		281F3991FA8EBD17340CD1B2 /* AgentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentStore.swift; sourceTree = "<group>"; };
+		36FB35EADA6DE4A661AE43FA /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+		3864F4968AEE469CB4196FC3 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		3D5B4F8C6E50EAAA567949F2 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
+		469965AE789DEA65897BCA80 /* LLMConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMConfig.swift; sourceTree = "<group>"; };
+		4FD153BC6839BA8A6047F9B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		516C0210074B3E7E3A26F155 /* SchedulerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerView.swift; sourceTree = "<group>"; };
+		63B056F81800E733E122E6AF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		69DC4FA0C275645820B0B410 /* MainPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPanelView.swift; sourceTree = "<group>"; };
+		6EFEAB18E8AFF07F4D87DF4C /* SafetyMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafetyMode.swift; sourceTree = "<group>"; };
+		6F874717BB931AFCBDE9273C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		76FF49DDDDACC4806DA66227 /* LLMClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMClient.swift; sourceTree = "<group>"; };
+		7CD4479417C704FCFA0E475F /* SearchChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchChatsView.swift; sourceTree = "<group>"; };
+		8690D8F0AB2A6A4488EC942D /* PromptInjectionScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptInjectionScanner.swift; sourceTree = "<group>"; };
+		8CBA8D8D6FB79F2BAF7850F5 /* macOSControlClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSControlClient.swift; sourceTree = "<group>"; };
+		971E79B9888FCDA31BDB09C9 /* SchedulerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerStore.swift; sourceTree = "<group>"; };
+		9C7D2DCB95F399E2D3A9C1D3 /* Skill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skill.swift; sourceTree = "<group>"; };
+		9D7B435AF7592A5526A8E98E /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		A3671917D241A8F990557BAF /* OpenCowork.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenCowork.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFD54C83B338DA421E07C453 /* TuistAssets+OpenCowork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+OpenCowork.swift"; sourceTree = "<group>"; };
+		B2A89575C4CD1DF6B67B6876 /* CreateTeamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamView.swift; sourceTree = "<group>"; };
+		B70AB2CE8B20B6868B13D7E7 /* OpenCowork-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "OpenCowork-Info.plist"; sourceTree = "<group>"; };
+		B86027375F72A545F5F34FA6 /* TaskSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSession.swift; sourceTree = "<group>"; };
+		C4A695465E9448E9EA9DF662 /* OpenCoworkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCoworkApp.swift; sourceTree = "<group>"; };
+		D978E058F83FF22B22BBE70B /* placeholder.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = placeholder.txt; sourceTree = "<group>"; };
+		E066386F5DC8EE33DF02336C /* LLMSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMSelectionView.swift; sourceTree = "<group>"; };
+		E5C8D956941019F4BCA96AA4 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
+		EACA0E8A91DDCBCE9D85BE2C /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
+		EAE900F44ED098A945CAB9CA /* FileRollbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRollbackManager.swift; sourceTree = "<group>"; };
+		F8F0238F0FB2896C06D5F804 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		F9399F7AC89F4BBE31248598 /* TuistBundle+OpenCowork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistBundle+OpenCowork.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		42A4EA0A104B2E731B016464 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0524B1BEF66ED1710F6EC0FA /* Clients */ = {
+			isa = PBXGroup;
+			children = (
+				0CBA08331AB9B9187DF95F05 /* CronMatcher.swift */,
+				EAE900F44ED098A945CAB9CA /* FileRollbackManager.swift */,
+				76FF49DDDDACC4806DA66227 /* LLMClient.swift */,
+				8CBA8D8D6FB79F2BAF7850F5 /* macOSControlClient.swift */,
+			);
+			path = Clients;
+			sourceTree = "<group>";
+		};
+		21152CDE9DD38A4C9D4A0030 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4FD153BC6839BA8A6047F9B5 /* Assets.xcassets */,
+				D978E058F83FF22B22BBE70B /* placeholder.txt */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		32C76DE116880E1AD0D68F62 /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				B8351BC1DF1FEC7B4E4BD7CF /* Derived */,
+				21152CDE9DD38A4C9D4A0030 /* Resources */,
+				958717D71833D0A2C0D3857A /* Sources */,
+			);
+			name = Project;
+			sourceTree = "<group>";
+		};
+		91F51A4A5D830C43F93285DF /* InfoPlists */ = {
+			isa = PBXGroup;
+			children = (
+				B70AB2CE8B20B6868B13D7E7 /* OpenCowork-Info.plist */,
+			);
+			path = InfoPlists;
+			sourceTree = "<group>";
+		};
+		958717D71833D0A2C0D3857A /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				0524B1BEF66ED1710F6EC0FA /* Clients */,
+				BFEE93543DC64124AC206559 /* Models */,
+				FD63A77FAAD0CB92DEB9B108 /* Services */,
+				B8F9030AB9907D0E26512680 /* Stores */,
+				FD46CB341A3BD7AD6B2BB25C /* Views */,
+				C4A695465E9448E9EA9DF662 /* OpenCoworkApp.swift */,
+				36FB35EADA6DE4A661AE43FA /* StatusItemController.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		A6282A727D162FD97B35E165 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3671917D241A8F990557BAF /* OpenCowork.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B8351BC1DF1FEC7B4E4BD7CF /* Derived */ = {
+			isa = PBXGroup;
+			children = (
+				91F51A4A5D830C43F93285DF /* InfoPlists */,
+				F4D663BA9FFFF9C761A3B243 /* Sources */,
+			);
+			path = Derived;
+			sourceTree = "<group>";
+		};
+		B8F9030AB9907D0E26512680 /* Stores */ = {
+			isa = PBXGroup;
+			children = (
+				281F3991FA8EBD17340CD1B2 /* AgentStore.swift */,
+				EACA0E8A91DDCBCE9D85BE2C /* AppStore.swift */,
+				971E79B9888FCDA31BDB09C9 /* SchedulerStore.swift */,
+			);
+			path = Stores;
+			sourceTree = "<group>";
+		};
+		BFEE93543DC64124AC206559 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				469965AE789DEA65897BCA80 /* LLMConfig.swift */,
+				6EFEAB18E8AFF07F4D87DF4C /* SafetyMode.swift */,
+				077CF7E5CCF713784F2E7770 /* ScheduledTask.swift */,
+				9C7D2DCB95F399E2D3A9C1D3 /* Skill.swift */,
+				B86027375F72A545F5F34FA6 /* TaskSession.swift */,
+				E5C8D956941019F4BCA96AA4 /* Team.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CA597DED06D3BBFE06B3BEF6 = {
+			isa = PBXGroup;
+			children = (
+				A6282A727D162FD97B35E165 /* Products */,
+				32C76DE116880E1AD0D68F62 /* Project */,
+			);
+			sourceTree = "<group>";
+		};
+		F4D663BA9FFFF9C761A3B243 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AFD54C83B338DA421E07C453 /* TuistAssets+OpenCowork.swift */,
+				F9399F7AC89F4BBE31248598 /* TuistBundle+OpenCowork.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		FD46CB341A3BD7AD6B2BB25C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F8F0238F0FB2896C06D5F804 /* ChatView.swift */,
+				B2A89575C4CD1DF6B67B6876 /* CreateTeamView.swift */,
+				9D7B435AF7592A5526A8E98E /* HistoryView.swift */,
+				E066386F5DC8EE33DF02336C /* LLMSelectionView.swift */,
+				69DC4FA0C275645820B0B410 /* MainPanelView.swift */,
+				167574DEB316CDC197DA1034 /* MenuBarPopoverView.swift */,
+				6F874717BB931AFCBDE9273C /* OnboardingView.swift */,
+				07ED050A382077CBD308F049 /* ProviderIcon.swift */,
+				516C0210074B3E7E3A26F155 /* SchedulerView.swift */,
+				7CD4479417C704FCFA0E475F /* SearchChatsView.swift */,
+				064A4B65BDB46BD6E397A577 /* SelectableTextView.swift */,
+				63B056F81800E733E122E6AF /* SettingsView.swift */,
+				3D5B4F8C6E50EAAA567949F2 /* SkillsView.swift */,
+				3864F4968AEE469CB4196FC3 /* WelcomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FD63A77FAAD0CB92DEB9B108 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8690D8F0AB2A6A4488EC942D /* PromptInjectionScanner.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8414FA5FED27364AEF021CBB /* OpenCowork */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 767F860B7FBA3CDFBA2E852B /* Build configuration list for PBXNativeTarget "OpenCowork" */;
+			buildPhases = (
+				03A011AF1E93A48CC1CE58CF /* Sources */,
+				8E27023EB935D92D4355A267 /* Resources */,
+				42A4EA0A104B2E731B016464 /* Frameworks */,
+				C10F17EC65C218D61B8A9E78 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenCowork;
+			packageProductDependencies = (
+			);
+			productName = OpenCowork;
+			productReference = A3671917D241A8F990557BAF /* OpenCowork.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		86B9E8A7E850FFEB1DEB87A7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 95FECB7D7010D7F28DAF2C0E /* Build configuration list for PBXProject "OpenCowork" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CA597DED06D3BBFE06B3BEF6;
+			productRefGroup = A6282A727D162FD97B35E165 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8414FA5FED27364AEF021CBB /* OpenCowork */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8E27023EB935D92D4355A267 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2DF93FE62850E0178B2ED1A /* Assets.xcassets in Resources */,
+				1FAAA9EEE26F334F10866243 /* placeholder.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		03A011AF1E93A48CC1CE58CF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3DB243B29E16AC312E2464D8 /* TuistAssets+OpenCowork.swift in Sources */,
+				0743C82A947CB2220D8B5B82 /* TuistBundle+OpenCowork.swift in Sources */,
+				59CBF64F61665D8C1EB44D3C /* CronMatcher.swift in Sources */,
+				AF26394F84089AEC358729BE /* FileRollbackManager.swift in Sources */,
+				1C28719CDFF52F08E1E9C3B1 /* LLMClient.swift in Sources */,
+				4462BA43374F53C5D38D39FB /* macOSControlClient.swift in Sources */,
+				83599EF9487055670F1079EF /* LLMConfig.swift in Sources */,
+				D1EBACF9DF52923B6C5F2697 /* SafetyMode.swift in Sources */,
+				1BB3AFAF060A638247C284BC /* ScheduledTask.swift in Sources */,
+				73C2E7AA1B6BF5B6DBBC5AB6 /* Skill.swift in Sources */,
+				5B58D5FABFF4E9BEF14D17CA /* TaskSession.swift in Sources */,
+				0A274D27E4947DAB84C0A198 /* Team.swift in Sources */,
+				01816A0FEDBEC48A7D09060B /* OpenCoworkApp.swift in Sources */,
+				8BB461DEB30C5BC1FE8959B7 /* PromptInjectionScanner.swift in Sources */,
+				3264AE778D6AA043C9EC4C5E /* StatusItemController.swift in Sources */,
+				FE6DD15BA2F243DD0CE7E2D7 /* AgentStore.swift in Sources */,
+				1457F1F4457EE770F116A928 /* AppStore.swift in Sources */,
+				058D0F8A194A08FD32BF0CA0 /* SchedulerStore.swift in Sources */,
+				621C5FF7DD4B2BBC2C4B436E /* ChatView.swift in Sources */,
+				051E34EB388620C7CEECC835 /* CreateTeamView.swift in Sources */,
+				B832B2B87D81D98FBE997442 /* HistoryView.swift in Sources */,
+				254AB33C9B377932D038B5D2 /* LLMSelectionView.swift in Sources */,
+				A0A95B3714F08155541082EF /* MainPanelView.swift in Sources */,
+				3B33B1B8DBD15E233399B06F /* MenuBarPopoverView.swift in Sources */,
+				27DAB73AB29A5AD0BFFFCBFF /* OnboardingView.swift in Sources */,
+				A8262F87FFD47C75B2973ABD /* ProviderIcon.swift in Sources */,
+				FEED1D192EA6658350164B92 /* SchedulerView.swift in Sources */,
+				6DFE4BF7463D529CFC601790 /* SearchChatsView.swift in Sources */,
+				639C7A6AD85645490CBC6C30 /* SelectableTextView.swift in Sources */,
+				F6F3F242A889381C7D9E9688 /* SettingsView.swift in Sources */,
+				86246DFF83A1D4189916F68E /* SkillsView.swift in Sources */,
+				A199556C129F94E54A988C55 /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		01CCA2824519E20444AD3574 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Derived/InfoPlists/OpenCowork-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.opencode.opencowork;
+				PRODUCT_NAME = OpenCowork;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5;
+			};
+			name = Release;
+		};
+		1C75CC6F07733B83FE97B5A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BC09C2506CC4010C8E1A154D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Derived/InfoPlists/OpenCowork-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.opencode.opencowork;
+				PRODUCT_NAME = OpenCowork;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5;
+			};
+			name = Debug;
+		};
+		EEE3DD8E44649F3FF43F31CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		767F860B7FBA3CDFBA2E852B /* Build configuration list for PBXNativeTarget "OpenCowork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC09C2506CC4010C8E1A154D /* Debug */,
+				01CCA2824519E20444AD3574 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		95FECB7D7010D7F28DAF2C0E /* Build configuration list for PBXProject "OpenCowork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEE3DD8E44649F3FF43F31CC /* Debug */,
+				1C75CC6F07733B83FE97B5A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 86B9E8A7E850FFEB1DEB87A7 /* Project object */;
+}

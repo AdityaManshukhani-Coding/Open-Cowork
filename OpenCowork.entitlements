@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Required for Apple Events to control other applications -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+	<!-- Allow sending Apple Events to common target apps -->
+	<key>com.apple.security.temporary-exception.apple-events</key>
+	<array>
+		<string>com.apple.finder</string>
+		<string>com.apple.Safari</string>
+		<string>com.apple.mail</string>
+		<string>com.apple.Notes</string>
+		<string>com.apple.TextEdit</string>
+		<string>com.apple.calendar</string>
+		<string>com.apple.reminders</string>
+		<string>com.apple.systempreferences</string>
+		<string>com.apple.Terminal</string>
+	</array>
+</dict>
+</plist>

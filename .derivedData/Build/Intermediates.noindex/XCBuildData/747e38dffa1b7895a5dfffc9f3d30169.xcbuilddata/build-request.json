@@ -1,0 +1,64 @@
+{
+  "buildCommand" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildOnly"
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "182e4980dd6ff6fd1e188441d91b3f28b5776f74a191c8409d45359bee1ae804"
+    }
+  ],
+  "containerPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/OpenCowork.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "hostTargetedPlatform" : null,
+      "platform" : "macosx",
+      "sdk" : "macosx26.5",
+      "sdkVariant" : "macos",
+      "supportedArchitectures" : [
+        "arm64e",
+        "arm64",
+        "x86_64"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Products",
+      "derivedDataPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData",
+      "indexDataStoreFolderPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/.derivedData/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "commandLine" : {
+        "table" : {
+
+        }
+      },
+      "synthesized" : {
+        "table" : {
+          "ACTION" : "build",
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "YES"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

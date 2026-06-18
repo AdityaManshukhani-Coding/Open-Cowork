@@ -1,0 +1,2 @@
+# Open Cowork Resources
+This file serves as a placeholder to ensure the Resources directory exists for the Tuist configuration.

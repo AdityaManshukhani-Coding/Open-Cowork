@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>colors</key>
+	<array/>
+	<key>images</key>
+	<array>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameAnthropic</string>
+			<key>relativePath</key>
+			<string>./anthropic.imageset</string>
+			<key>swiftSymbol</key>
+			<string>anthropic</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameAzure</string>
+			<key>relativePath</key>
+			<string>./azure.imageset</string>
+			<key>swiftSymbol</key>
+			<string>azure</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameBedrock</string>
+			<key>relativePath</key>
+			<string>./bedrock.imageset</string>
+			<key>swiftSymbol</key>
+			<string>bedrock</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameCerebras</string>
+			<key>relativePath</key>
+			<string>./cerebras.imageset</string>
+			<key>swiftSymbol</key>
+			<string>cerebras</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameClaude</string>
+			<key>relativePath</key>
+			<string>./claude.imageset</string>
+			<key>swiftSymbol</key>
+			<string>claude</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameCohere</string>
+			<key>relativePath</key>
+			<string>./cohere.imageset</string>
+			<key>swiftSymbol</key>
+			<string>cohere</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameDeepinfra</string>
+			<key>relativePath</key>
+			<string>./deepinfra.imageset</string>
+			<key>swiftSymbol</key>
+			<string>deepinfra</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameDeepseek</string>
+			<key>relativePath</key>
+			<string>./deepseek.imageset</string>
+			<key>swiftSymbol</key>
+			<string>deepseek</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameFireworks</string>
+			<key>relativePath</key>
+			<string>./fireworks.imageset</string>
+			<key>swiftSymbol</key>
+			<string>fireworks</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameGemini</string>
+			<key>relativePath</key>
+			<string>./gemini.imageset</string>
+			<key>swiftSymbol</key>
+			<string>gemini</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameGroq</string>
+			<key>relativePath</key>
+			<string>./groq.imageset</string>
+			<key>swiftSymbol</key>
+			<string>groq</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameHuggingface</string>
+			<key>relativePath</key>
+			<string>./huggingface.imageset</string>
+			<key>swiftSymbol</key>
+			<string>huggingface</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameJetbrains</string>
+			<key>relativePath</key>
+			<string>./jetbrains.imageset</string>
+			<key>swiftSymbol</key>
+			<string>jetbrains</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameLiquidai</string>
+			<key>relativePath</key>
+			<string>./liquidai.imageset</string>
+			<key>swiftSymbol</key>
+			<string>liquidai</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameLmstudio</string>
+			<key>relativePath</key>
+			<string>./lmstudio.imageset</string>
+			<key>swiftSymbol</key>
+			<string>lmstudio</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameLogo</string>
+			<key>relativePath</key>
+			<string>./logo.imageset</string>
+			<key>swiftSymbol</key>
+			<string>logo</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameMeta</string>
+			<key>relativePath</key>
+			<string>./meta.imageset</string>
+			<key>swiftSymbol</key>
+			<string>meta</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameMinimax</string>
+			<key>relativePath</key>
+			<string>./minimax.imageset</string>
+			<key>swiftSymbol</key>
+			<string>minimax</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameMistral</string>
+			<key>relativePath</key>
+			<string>./mistral.imageset</string>
+			<key>swiftSymbol</key>
+			<string>mistral</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameMoonshot</string>
+			<key>relativePath</key>
+			<string>./moonshot.imageset</string>
+			<key>swiftSymbol</key>
+			<string>moonshot</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameNex</string>
+			<key>relativePath</key>
+			<string>./nex.imageset</string>
+			<key>swiftSymbol</key>
+			<string>nex</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameNovita</string>
+			<key>relativePath</key>
+			<string>./novita.imageset</string>
+			<key>swiftSymbol</key>
+			<string>novita</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameNvidia</string>
+			<key>relativePath</key>
+			<string>./nvidia.imageset</string>
+			<key>swiftSymbol</key>
+			<string>nvidia</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameOllama</string>
+			<key>relativePath</key>
+			<string>./ollama.imageset</string>
+			<key>swiftSymbol</key>
+			<string>ollama</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameOpenai</string>
+			<key>relativePath</key>
+			<string>./openai.imageset</string>
+			<key>swiftSymbol</key>
+			<string>openai</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameOpenbmb</string>
+			<key>relativePath</key>
+			<string>./openbmb.imageset</string>
+			<key>swiftSymbol</key>
+			<string>openbmb</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameOpenrouter</string>
+			<key>relativePath</key>
+			<string>./openrouter.imageset</string>
+			<key>swiftSymbol</key>
+			<string>openrouter</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNamePerplexity</string>
+			<key>relativePath</key>
+			<string>./perplexity.imageset</string>
+			<key>swiftSymbol</key>
+			<string>perplexity</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameQwen</string>
+			<key>relativePath</key>
+			<string>./qwen.imageset</string>
+			<key>swiftSymbol</key>
+			<string>qwen</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameSapient</string>
+			<key>relativePath</key>
+			<string>./sapient.imageset</string>
+			<key>swiftSymbol</key>
+			<string>sapient</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameStep</string>
+			<key>relativePath</key>
+			<string>./step.imageset</string>
+			<key>swiftSymbol</key>
+			<string>step</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameTogetherai</string>
+			<key>relativePath</key>
+			<string>./togetherai.imageset</string>
+			<key>swiftSymbol</key>
+			<string>togetherai</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameXai</string>
+			<key>relativePath</key>
+			<string>./xai.imageset</string>
+			<key>swiftSymbol</key>
+			<string>xai</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameXiaomi</string>
+			<key>relativePath</key>
+			<string>./xiaomi.imageset</string>
+			<key>swiftSymbol</key>
+			<string>xiaomi</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/aditya.manshukhani@aics.espritscholen.nl/Open Cowork/Resources/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameZai</string>
+			<key>relativePath</key>
+			<string>./zai.imageset</string>
+			<key>swiftSymbol</key>
+			<string>zai</string>
+		</dict>
+	</array>
+	<key>symbols</key>
+	<array/>
+</dict>
+</plist>

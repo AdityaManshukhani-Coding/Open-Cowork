@@ -1,0 +1,23 @@
+{
+  "images": [
+    {
+      "filename": "deepinfra.png",
+      "idiom": "universal",
+      "scale": "1x"
+    },
+    {
+      "filename": "deepinfra@2x.png",
+      "idiom": "universal",
+      "scale": "2x"
+    },
+    {
+      "filename": "deepinfra@3x.png",
+      "idiom": "universal",
+      "scale": "3x"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
